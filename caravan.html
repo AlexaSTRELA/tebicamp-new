@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Караван — Теория большого кемпинга</title>
+<style>
+:root{--bg:#08252b;--bg2:#0b3037;--card:#0f3941;--card2:#123f48;--line:rgba(255,255,255,.12);--text:#f7fbfb;--muted:#bfd0d3;--accent:#30d4d7;--accent2:#7be7df;--warm:#ffbd6b;--shadow:0 24px 70px rgba(0,0,0,.28);}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#061f24 0%,#08282f 44%,#061f24 100%);color:var(--text);}
+a{color:inherit} .wrap{width:min(1180px,calc(100% - 40px));margin:auto} .topbar{position:sticky;top:0;z-index:40;background:rgba(5,27,32,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav{height:78px;display:flex;align-items:center;gap:26px} .brand{display:flex;align-items:center;gap:13px;text-decoration:none;min-width:0} .brand img{width:86px;height:48px;object-fit:contain;background:white;border-radius:12px;padding:3px} .brand b{font-size:16px;line-height:1.05} .navlinks{display:flex;gap:24px;margin-left:auto;align-items:center} .navlinks a{text-decoration:none;color:#d6e4e6;font-size:14px} .navcta{padding:11px 15px;border-radius:12px;background:var(--accent);color:#042429!important;font-weight:700}
+.breadcrumbs{padding:24px 0 14px;color:#9fb6ba;font-size:13px} .breadcrumbs span{color:#eaf4f5} .hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);gap:28px;align-items:stretch;padding-bottom:34px} .gallery{min-width:0} .main-photo{position:relative;border-radius:28px;overflow:hidden;border:1px solid var(--line);background:#0b2d34;box-shadow:var(--shadow);aspect-ratio:16/10} .main-photo img{display:block;width:100%;height:100%;object-fit:cover} .photo-count{position:absolute;right:16px;bottom:16px;background:rgba(5,25,29,.8);border:1px solid rgba(255,255,255,.16);padding:9px 12px;border-radius:999px;font-size:13px}
+.thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px} .thumb{position:relative;border:1px solid var(--line);background:#0b3037;border-radius:15px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;padding:0} .thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9} .thumb.active{outline:2px solid var(--accent);outline-offset:1px} .thumb-more{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,20,24,.58);font-size:20px;font-weight:700}
+.product-panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(18,63,72,.94),rgba(10,47,54,.95));border-radius:28px;padding:28px;box-shadow:var(--shadow);display:flex;flex-direction:column} .status-row{display:flex;gap:8px;flex-wrap:wrap} .badge{display:inline-flex;padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;background:rgba(48,212,215,.13);border:1px solid rgba(48,212,215,.28);color:#bffbfa} .badge.secondary{background:rgba(255,255,255,.07);border-color:var(--line);color:#e6f0f1} h1{font-size:46px;line-height:1.03;margin:18px 0 5px;letter-spacing:-.035em} .year{font-size:19px;color:#c6d5d7} .price{font-size:34px;font-weight:800;margin:23px 0 18px} .chips{display:flex;gap:9px;flex-wrap:wrap} .chip{padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.065);border:1px solid var(--line);font-size:13px;color:#eaf5f6} .summary{margin:20px 0 0;color:var(--muted);line-height:1.63;font-size:15px} .panel-actions{margin-top:auto;padding-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:10px} .btn{border:0;border-radius:14px;padding:15px 16px;font-weight:800;font-size:14px;text-align:center;text-decoration:none;cursor:pointer} .btn.primary{background:var(--accent);color:#06282d} .btn.secondary{background:rgba(255,255,255,.07);border:1px solid var(--line);color:#fff}
+.section{padding:42px 0} .section h2{font-size:34px;letter-spacing:-.025em;margin:0 0 12px} .lead{max-width:780px;color:var(--muted);line-height:1.7;margin:0} .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px} .info-card{border:1px solid var(--line);background:rgba(13,51,59,.78);border-radius:22px;padding:22px} .info-card h3{font-size:18px;margin:0 0 14px} .specs{display:grid;grid-template-columns:1fr 1fr;gap:0 22px} .spec{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.09);font-size:14px} .spec span:first-child{color:#9fb7bb} .spec span:last-child{font-weight:700;text-align:right}
+.equipment{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px} .equip{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:17px;min-height:108px} .equip b{display:block;margin-bottom:7px} .equip small{color:#abc1c4;line-height:1.45} .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:8px;box-shadow:0 0 0 4px rgba(48,212,215,.10)}
+.longtext{margin-top:20px;border:1px solid var(--line);background:rgba(12,49,57,.72);border-radius:22px;padding:26px;line-height:1.78;color:#d6e5e7} .longtext p{margin:0 0 16px} .longtext p:last-child{margin-bottom:0} .prototype-note{margin-top:14px;padding:12px 14px;border-radius:13px;background:rgba(255,189,107,.10);border:1px solid rgba(255,189,107,.25);color:#f5cf9c;font-size:13px;line-height:1.5}
+.video-demo{margin-top:20px;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#071d22;aspect-ratio:16/7;display:grid;place-items:center;position:relative} .video-demo:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(48,212,215,.12),transparent 48%),linear-gradient(0deg,rgba(0,0,0,.4),transparent)} .play{position:relative;z-index:1;width:72px;height:72px;border-radius:50%;background:#fff;color:#083038;display:grid;place-items:center;font-size:28px;padding-left:4px;box-shadow:0 14px 40px rgba(0,0,0,.28)} .video-label{position:absolute;left:20px;bottom:18px;z-index:2;font-weight:700} .video-label small{display:block;color:#b9cdd0;font-weight:400;margin-top:4px}
+.cta{border:1px solid rgba(48,212,215,.25);background:linear-gradient(135deg,rgba(48,212,215,.13),rgba(18,63,72,.86));border-radius:28px;padding:30px;display:flex;align-items:center;gap:20px;justify-content:space-between} .cta h2{margin:0 0 7px;font-size:30px} .cta p{margin:0;color:#bfd2d4;line-height:1.55} .cta .btn{min-width:190px} .similar{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px} .similar-card{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:20px;padding:18px;min-height:138px} .similar-card .mini-status{color:var(--accent2);font-size:12px;font-weight:700} .similar-card h3{margin:10px 0 6px;font-size:19px} .similar-card p{margin:0;color:#9fb6ba;font-size:13px}
+.footer{padding:36px 0 90px;color:#91aaae;font-size:13px}
+.mobile-sticky{display:none} .modal-backdrop{position:fixed;inset:0;background:rgba(2,13,16,.72);z-index:100;display:none;align-items:center;justify-content:center;padding:20px} .modal-backdrop.open{display:flex} .modal{width:min(460px,100%);background:#0d343b;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);position:relative} .modal h3{font-size:25px;margin:0 0 8px} .modal p{margin:0;color:#bcd0d2;line-height:1.55} .close{position:absolute;right:14px;top:12px;border:0;background:rgba(255,255,255,.08);color:#fff;border-radius:50%;width:36px;height:36px;font-size:22px;cursor:pointer} .contact-list{display:grid;gap:10px;margin-top:18px} .contact-list a{display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:15px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--line)} .contact-list strong{font-size:15px} .contact-list span{color:#9fb7bb;font-size:13px}
+@media(max-width:900px){.navlinks a:not(.navcta){display:none} .hero{grid-template-columns:1fr} .product-panel{min-height:0} .equipment{grid-template-columns:repeat(2,1fr)} .specs{grid-template-columns:1fr} .grid-2{grid-template-columns:1fr} .similar{grid-template-columns:1fr} .cta{align-items:flex-start;flex-direction:column}}
+@media(max-width:640px){.wrap{width:min(100% - 24px,520px)} .nav{height:66px;gap:10px} .brand img{width:62px;height:38px;border-radius:9px} .brand b{font-size:13px} .navcta{padding:9px 10px!important;font-size:12px!important} .breadcrumbs{padding:15px 0 10px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .hero{gap:16px;padding-bottom:18px} .main-photo{border-radius:20px;aspect-ratio:4/3} .thumbs{grid-template-columns:repeat(4,1fr);overflow:hidden} .thumb:nth-child(5){display:none} .product-panel{border-radius:20px;padding:20px} h1{font-size:34px;margin-top:14px} .price{font-size:28px;margin:18px 0 15px} .panel-actions{grid-template-columns:1fr} .section{padding:30px 0} .section h2{font-size:27px} .equipment{grid-template-columns:1fr 1fr;gap:9px} .equip{padding:14px;min-height:104px} .info-card{padding:18px;border-radius:18px} .longtext{padding:19px;border-radius:18px} .video-demo{aspect-ratio:16/10;border-radius:19px} .cta{padding:22px;border-radius:20px} .cta h2{font-size:25px} .footer{padding-bottom:94px} .mobile-sticky{display:flex;position:fixed;left:10px;right:10px;bottom:10px;z-index:60;background:rgba(7,31,36,.94);border:1px solid rgba(255,255,255,.14);border-radius:17px;padding:8px 8px 8px 13px;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.38);backdrop-filter:blur(16px)} .mobile-sticky b{font-size:16px} .mobile-sticky button{border:0;border-radius:12px;background:var(--accent);color:#05272b;font-weight:800;padding:12px 15px}}
+
+/* V2: cleaner first screen, swipe gallery, video, mobile overflow fixes */
+.gallery-viewport{position:relative;border-radius:28px;overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);background:#0b2d34;box-shadow:var(--shadow);aspect-ratio:16/10;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+.gallery-viewport::-webkit-scrollbar{display:none}
+.gallery-track{display:flex;width:100%;height:100%}
+.gallery-slide{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always}
+.gallery-slide img{display:block;width:100%;height:100%;object-fit:cover}
+.equipment-template-note{margin-top:14px}
+.video-demo{aspect-ratio:16/8;display:block;position:relative;overflow:hidden}
+.video-demo:before{z-index:1;background:linear-gradient(0deg,rgba(2,20,24,.76),rgba(2,20,24,.08) 64%)}
+.video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:48px;height:48px;border:0;border-radius:50%;background:rgba(255,255,255,.94);color:#083038;display:grid;place-items:center;font-size:18px;padding:0 0 0 3px;box-shadow:0 10px 30px rgba(0,0,0,.28);cursor:pointer}
+.video-label{left:18px;right:18px;bottom:15px;z-index:2;display:block}
+.video-label b{display:block;font-size:15px}
+.video-label small{font-size:12px}
+.cta,.cta *{min-width:0}
+.cta .btn{box-sizing:border-box;max-width:100%}
+.mobile-sticky{box-sizing:border-box}
+.mobile-sticky b{white-space:nowrap;line-height:1.1}
+.mobile-sticky button{white-space:nowrap;box-sizing:border-box}
+@media(max-width:640px){
+  .gallery-viewport{border-radius:20px;aspect-ratio:4/3}
+  .thumbs{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 4px;scrollbar-width:none}
+  .thumbs::-webkit-scrollbar{display:none}
+  .thumb{flex:0 0 76px;width:76px}
+  .product-panel .panel-actions{padding-top:20px}
+  .video-demo{aspect-ratio:16/10}
+  .play{width:44px;height:44px;font-size:16px}
+  .cta{width:100%;box-sizing:border-box;overflow:hidden}
+  .cta .btn{width:100%!important;min-width:0!important;display:block}
+  .mobile-sticky{left:8px!important;right:8px!important;bottom:8px!important;width:auto!important;padding:7px 7px 7px 12px!important;gap:8px!important;border-radius:15px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important}
+  .mobile-sticky b{font-size:15px!important;overflow:hidden;text-overflow:ellipsis}
+  .mobile-sticky button{padding:10px 12px!important;border-radius:11px!important;font-size:13px!important;line-height:1!important}
+}
+
+/* V10 refinements */
+.product-panel .year{margin-top:4px;color:#cfe1e4;font-size:15px;font-weight:700}
+.product-panel .price{margin-top:10px}
+.dimensions-grid-v10{margin-top:18px}
+.dimensions-card .spec span:last-child{color:#8fb0b5}
+.dimensions-note-v10{margin-top:12px}
+.heating-card-v10{margin-top:18px}
+@media(max-width:760px){
+  .product-panel{padding:18px 16px!important}
+  .product-panel h1{margin-bottom:2px!important}
+  .product-panel .price{margin:9px 0 12px!important}
+  .product-panel .panel-actions{margin-top:0!important}
+  .dimensions-grid-v10{grid-template-columns:1fr!important;gap:12px!important}
+  .heating-card-v10{margin-top:12px}
+}
+</style>
+<style id="v3-gallery-sticky-fixes">
+/* V3: gallery controls + compact mobile contact bar */
+.thumb{transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease, opacity .16s ease;border:2px solid transparent!important;outline:none!important;opacity:.68}
+.thumb.active{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(48,212,215,.20);transform:translateY(-1px);opacity:1}
+.thumb:focus-visible{outline:2px solid #fff!important;outline-offset:2px!important}
+.thumb img{opacity:1!important}
+@media(max-width:640px){
+  .thumbs{scroll-behavior:smooth;overscroll-behavior-x:contain}
+  .thumb{flex:0 0 76px!important;width:76px!important;min-width:76px!important}
+  .mobile-sticky{
+    display:flex!important;
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+    width:calc(100% - 24px)!important;
+    max-width:420px!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    z-index:60!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:12px!important;
+    padding:8px 8px 8px 14px!important;
+    border-radius:18px!important;
+    background:rgba(7,31,36,.96)!important;
+    border:1px solid rgba(255,255,255,.14)!important;
+    box-shadow:0 14px 36px rgba(0,0,0,.32)!important;
+    backdrop-filter:blur(14px)!important;
+    -webkit-backdrop-filter:blur(14px)!important;
+  }
+  .sticky-price{display:flex!important;flex-direction:column!important;justify-content:center!important;min-width:0!important;gap:1px!important;line-height:1.05!important}
+  .sticky-price span{font-size:10px!important;line-height:1.1!important;text-transform:uppercase!important;letter-spacing:.08em!important;color:#8faeb2!important}
+  .sticky-price b{font-size:16px!important;line-height:1.18!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;color:#fff!important}
+  .sticky-contact-btn{flex:0 0 auto!important;min-width:118px!important;height:42px!important;padding:0 16px!important;border:0!important;border-radius:13px!important;background:var(--accent)!important;color:#06282d!important;font-size:13px!important;line-height:1!important;font-weight:800!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;box-sizing:border-box!important;cursor:pointer!important}
+}
+</style>
+<style id="v4-fixes">
+/* V4 — robust preview interactions and cleaner information architecture */
+.gallery-slide{scroll-margin-inline-start:0}
+.thumb{display:block;text-decoration:none;cursor:pointer}
+.dimension-template{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.dimension-template b{grid-column:1/-1;color:#dcebed;font-size:13px;margin-bottom:2px}
+.dimension-template span{display:flex;align-items:center;min-height:38px;padding:9px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:11px;color:#93adb1;font-size:12px;line-height:1.3}
+.compact-note{margin-top:12px}
+#contactModal:target{display:flex!important}
+#contactModal .close{text-decoration:none;display:grid;place-items:center}
+@media(max-width:640px){
+  .thumbs{display:flex!important;gap:8px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:2px 2px 6px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
+  .thumbs::-webkit-scrollbar{display:none!important}
+  .thumb{display:block!important;flex:0 0 70px!important;width:70px!important;height:52px!important;min-width:70px!important;border-radius:10px!important;overflow:hidden!important;box-sizing:border-box!important}
+  .thumb:nth-child(5){display:block!important}
+  .thumb img{width:100%!important;height:100%!important;object-fit:cover!important}
+  .dimension-template{grid-template-columns:1fr!important}
+  .mobile-sticky{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    left:50%!important;right:auto!important;
+    transform:translateX(-50%)!important;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+    width:min(calc(100vw - 28px),362px)!important;
+    max-width:calc(100% - 28px)!important;
+    box-sizing:border-box!important;
+    padding:7px!important;
+    gap:10px!important;
+    border-radius:18px!important;
+    background:rgba(6,28,33,.97)!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    box-shadow:0 16px 38px rgba(0,0,0,.36)!important;
+    overflow:hidden!important;
+  }
+  .sticky-price{display:flex!important;align-items:center!important;min-width:0!important;padding:0 8px!important}
+  .sticky-price b{font-size:17px!important;line-height:1!important;white-space:nowrap!important;letter-spacing:-.02em!important;color:#fff!important}
+  .sticky-contact-btn{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    min-width:112px!important;height:44px!important;padding:0 16px!important;
+    border-radius:12px!important;background:var(--accent)!important;color:#05272b!important;
+    text-decoration:none!important;font-size:13px!important;font-weight:800!important;line-height:1!important;
+    box-sizing:border-box!important;white-space:nowrap!important
+  }
+  .cta .btn,.cta .open-contact{max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+}
+</style>
+<style id="gallery-sync-style-v5">
+.thumb{appearance:none;-webkit-appearance:none;text-decoration:none;color:inherit;font:inherit}
+.gallery-slide img{object-position:center center!important;transform:none!important}
+.thumb img{object-position:center center!important;transform:none!important}
+.thumb.active{outline:2px solid var(--accent)!important;outline-offset:1px!important;border-color:var(--accent)!important}
+@media(max-width:640px){
+  .footer{padding-bottom:34px!important}
+  .thumbs{overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity}
+  .thumb{scroll-snap-align:center;display:block!important}
+}
+
+<style id="gallery-v6-clean-state">
+/* V6 — one source of truth for thumbnail state: the .active class set by JS. */
+.thumbs .thumb{border:2px solid transparent!important;box-shadow:none!important;outline:none!important;opacity:.68!important;transform:none!important}
+.thumbs .thumb.active{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(48,212,215,.20)!important;opacity:1!important;transform:none!important}
+</style>
+<style id="gallery-v8-final-css">
+/* V8: native swipe/trackpad scrolling + one synchronized thumbnail state */
+.gallery-viewport{
+  position:relative!important;
+  overflow-x:scroll!important;
+  overflow-y:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  scroll-snap-type:x mandatory!important;
+  scroll-behavior:auto!important;
+  overscroll-behavior-x:contain!important;
+  touch-action:auto!important;
+}
+.gallery-track{
+  display:grid!important;
+  grid-auto-flow:column!important;
+  grid-auto-columns:100%!important;
+  width:100%!important;
+  height:100%!important;
+}
+.gallery-slide{
+  position:relative!important;
+  width:100%!important;
+  min-width:100%!important;
+  height:100%!important;
+  scroll-snap-align:start!important;
+  scroll-snap-stop:always!important;
+}
+.gallery-slide img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important;display:block!important;transform:none!important}
+.thumb{outline:none!important;box-shadow:none!important}
+.thumb.active{outline:2px solid var(--accent)!important;outline-offset:1px!important}
+.demo-photo-index{
+  position:absolute;left:12px;top:12px;z-index:3;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:30px;height:30px;padding:0 8px;border-radius:999px;
+  background:rgba(4,31,36,.78);border:1px solid rgba(255,255,255,.18);
+  color:#fff;font-size:12px;font-weight:800;line-height:1;
+  pointer-events:none;
+}
+.thumb .demo-photo-index{left:5px;top:5px;min-width:20px;height:20px;padding:0 5px;font-size:10px}
+</style>
+<style id="gallery-lightbox-v21-clean">
+/* V21 — single clean fullscreen gallery implementation. Older experimental
+   fullscreen styles were removed to avoid cross-version conflicts. */
+.gallery-main-wrap{position:relative;min-width:0}
+.gallery-slide{position:relative}
+.gallery-slide img{cursor:zoom-in;-webkit-tap-highlight-color:transparent}
+.gallery .photo-count{z-index:5;right:14px!important;bottom:14px!important;left:auto!important;top:auto!important;white-space:nowrap}
+.gallery .demo-photo-index{display:none!important}
+.gallery-lightbox[hidden]{display:none!important}
+.gallery-lightbox{position:fixed;inset:0;z-index:10000;background:rgba(2,10,13,.96);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .14s ease;overscroll-behavior:contain}
+.gallery-lightbox.open{opacity:1}
+.gallery-lightbox-open{overflow:hidden!important}
+.gallery-lightbox-stage{position:absolute!important;inset:0!important;display:block!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch!important;scroll-snap-type:x mandatory!important;scroll-behavior:auto!important;overscroll-behavior-x:contain!important;touch-action:pan-x!important;scrollbar-width:none!important;user-select:none!important;-webkit-user-select:none!important}
+.gallery-lightbox-stage::-webkit-scrollbar{display:none!important}
+.gallery-lightbox-track{display:grid!important;grid-auto-flow:column!important;grid-auto-columns:100%!important;width:100%!important;height:100%!important;transform:none!important;transition:none!important}
+.gallery-lightbox-slide{position:relative!important;width:100%!important;min-width:100%!important;height:100%!important;scroll-snap-align:start!important;scroll-snap-stop:always!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;background:transparent!important}
+.gallery-lightbox-image{display:block!important;max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important;object-fit:contain!important;transform-origin:center center!important;will-change:transform!important;user-select:none!important;-webkit-user-select:none!important;-webkit-user-drag:none!important;touch-action:pan-x!important;background:transparent!important}
+.gallery-lightbox-stage.is-zoomed{overflow:hidden!important;touch-action:none!important;scroll-snap-type:none!important}
+.gallery-lightbox-stage.is-zoomed .gallery-lightbox-image{touch-action:none!important}
+.gallery-lightbox-close{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:7;width:46px;height:46px;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:rgba(5,25,29,.72);color:#fff;font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(12px)}
+.gallery-lightbox-arrow{position:absolute;top:50%;z-index:6;transform:translateY(-50%);width:48px;height:64px;border:1px solid rgba(255,255,255,.14);border-radius:16px;background:rgba(5,25,29,.58);color:#fff;font-size:36px;display:grid!important;place-items:center;cursor:pointer;backdrop-filter:blur(10px)}
+.gallery-lightbox-prev{left:18px}.gallery-lightbox-next{right:18px}
+.gallery-lightbox-zoom{position:absolute;left:14px;bottom:max(16px,env(safe-area-inset-bottom));z-index:6;width:44px;height:44px;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:rgba(5,25,29,.72);color:#fff;font-size:24px;line-height:1;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(10px)}
+.gallery-lightbox-count{position:absolute;right:16px;bottom:max(18px,env(safe-area-inset-bottom));z-index:6;background:rgba(5,25,29,.78);border:1px solid rgba(255,255,255,.16);padding:9px 12px;border-radius:999px;font-size:13px;color:#fff;white-space:nowrap;backdrop-filter:blur(10px)}
+.gallery-lightbox-hint{position:absolute;left:50%;top:max(18px,env(safe-area-inset-top));bottom:auto;transform:translateX(-50%);z-index:5;color:rgba(255,255,255,.68);font-size:11px;white-space:nowrap;pointer-events:none}
+@media(max-width:767px){
+ .gallery-lightbox-arrow{width:40px!important;height:52px!important;font-size:30px!important;border-radius:14px!important;background:rgba(5,25,29,.48)!important}
+ .gallery-lightbox-prev{left:8px!important}.gallery-lightbox-next{right:8px!important}
+ .gallery-lightbox-zoom{left:10px!important;bottom:max(12px,env(safe-area-inset-bottom))!important;width:40px!important;height:40px!important;font-size:22px!important}
+ .gallery-lightbox-count{right:12px;bottom:max(14px,env(safe-area-inset-bottom));padding:8px 11px}
+ .gallery-lightbox-close{width:42px;height:42px;font-size:27px;right:12px}
+ .gallery-lightbox-hint{font-size:10px!important;max-width:58vw!important;text-align:center!important;white-space:normal!important}
+}
+</style>
+<style id="v22-design-lock">
+/* V22 approved product-header + related-caravan cards. Gallery mechanics untouched. */
+@media (min-width:901px){
+  .hero{grid-template-columns:minmax(0,1.55fr) 320px;gap:24px;align-items:start}
+  .product-panel{align-self:start;min-height:0;padding:20px 20px 18px;border-radius:22px;display:block}
+  .product-panel .status-row{gap:6px}
+  .product-panel .badge{padding:6px 9px;font-size:11px}
+  .product-panel h1{font-size:31px;line-height:1.04;margin:14px 0 5px;letter-spacing:-.03em}
+  .product-panel .year{font-size:15px;line-height:1.4}
+  .product-panel .price{font-size:28px;margin:17px 0 14px}
+  .product-panel .panel-actions{margin-top:0;padding-top:0;gap:8px}
+  .product-panel .btn{padding:12px 10px;font-size:13px;border-radius:12px}
+}
+.similar-section{padding-top:34px}
+.similar-lead{margin-top:0}
+.similar{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
+.similar-card{padding:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.similar-card:hover{transform:translateY(-3px);border-color:rgba(48,212,215,.36);background:rgba(255,255,255,.055)}
+.similar-photo{aspect-ratio:16/9;overflow:hidden;background:#0a2b31;border-bottom:1px solid var(--line)}
+.similar-photo img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .25s ease}
+.similar-card:hover .similar-photo img{transform:scale(1.018)}
+.similar-body{padding:16px 17px 17px;display:flex;flex-direction:column;flex:1}
+.similar-meta{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.similar-year{color:#9fb6ba;font-size:12px;font-weight:700}
+.similar-card h3{margin:10px 0 5px;font-size:20px;line-height:1.15}
+.similar-price{font-size:18px;font-weight:800;margin:3px 0 8px}
+.similar-card p{margin:0;color:#9fb6ba;font-size:13px;line-height:1.45}
+.similar-link{margin-top:auto;padding-top:13px;color:var(--accent2);font-size:13px;font-weight:800}
+@media(max-width:900px){
+  .similar{display:flex;grid-template-columns:none;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 8px}
+  .similar::-webkit-scrollbar{display:none}
+  .similar-card{flex:0 0 82%;max-width:390px;scroll-snap-align:start;border-radius:18px}
+  .similar-photo{aspect-ratio:16/10}
+}
+@media(max-width:640px){
+  .similar-card{flex-basis:86%}
+  .similar-body{padding:14px 14px 15px}
+  .similar-card h3{font-size:18px}
+  .similar-price{font-size:17px}
+}
+</style>
+<style id="hymer-final-real-content">
+.actual-video{padding:0!important;overflow:hidden!important;display:block!important;background:#061f24!important}
+.hymer-video{display:block;width:100%;max-height:72vh;background:#02090b;object-fit:contain}
+.actual-video .video-label{position:static!important;padding:15px 18px 17px!important;background:linear-gradient(180deg,rgba(7,36,42,.98),rgba(5,28,33,.98))!important}
+.actual-video .video-label b{display:block;margin-bottom:4px}.actual-video .video-label small{color:#a9c1c4}
+@media(max-width:640px){.hymer-video{max-height:68vh}.actual-video .video-label{padding:13px 14px 15px!important}}
+</style>
+<style id="hymer-ready-v22-photo-fit">
+/* Final Hymer build: approved V22 cover + real-photo gallery. */
+.gallery-track{grid-template-rows:100%!important;align-items:stretch!important;min-height:0!important}
+.gallery-slide{height:100%!important;min-height:0!important;overflow:hidden!important;background:#0b2d34}
+.gallery-slide img{width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important;object-position:center center!important}
+#gallery-photo-cover img{object-fit:cover!important;object-position:center center!important}
+</style>
+<style id="tb-detail-v34-contact">
+.contact-list-v34{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+.contact-list-v34 a{min-height:58px!important;justify-content:center!important;text-align:center!important;border-color:rgba(92,225,230,.20)!important;}
+.contact-list-v34 a:hover{border-color:rgba(92,225,230,.55)!important;background:rgba(92,225,230,.10)!important;}
+.contact-list-v34 strong{font-size:14px!important;}
+</style>
+<style id="tebicamp-v42-brand-icons">
+/* V42 — matching vector brand icons in the caravan contact chooser. */
+.contact-list-v34 a{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:11px!important;padding:9px 11px!important;text-align:left!important;}
+.contact-list-v34 a .tb-brand-icon{width:36px;height:36px;flex:0 0 36px;display:flex;align-items:center;justify-content:center;border-radius:11px;overflow:hidden;background:rgba(255,255,255,.10)}
+.contact-list-v34 a .tb-brand-icon.telegram{background:transparent}
+.contact-list-v34 a .tb-brand-icon.avito{background:#fff}
+.contact-list-v34 a .tb-brand-icon.max{background:linear-gradient(140deg,#00BFFF 0%,#471AFF 57%,#9500FF 100%)}
+.contact-list-v34 a .tb-brand-icon.call{background:#24d5de;color:#063238}
+.contact-list-v34 a .tb-brand-icon svg{display:block;width:30px;height:30px}
+.contact-list-v34 a .tb-brand-icon.telegram svg{width:36px;height:36px}
+.contact-list-v34 a .tb-brand-icon.max svg{width:32px;height:32px}
+.contact-list-v34 a .tb-brand-icon.call svg{width:20px;height:20px}
+.contact-list-v34 strong{font-size:14px!important;white-space:nowrap}
+@media(max-width:420px){.contact-list-v34 a{gap:7px!important;padding:8px!important}.contact-list-v34 a .tb-brand-icon{width:30px;height:30px;flex-basis:30px}.contact-list-v34 a .tb-brand-icon svg{width:26px;height:26px}.contact-list-v34 a .tb-brand-icon.telegram svg{width:30px;height:30px}.contact-list-v34 strong{font-size:12px!important}}
+</style>
+
+<!-- TEBICAMP V43: встроенные видеообзоры RuTube (вместо локального MP4 и заглушек) -->
+<style id="tebicamp-v43-rutube">
+.tebicamp-rutube-video{aspect-ratio:auto!important;margin-top:20px!important;border-radius:24px!important;overflow:hidden!important;background:#061f24!important}
+.tebicamp-rutube-video::before{display:none!important}
+.tebicamp-rutube-frame{width:100%;aspect-ratio:16/9;min-height:180px;position:relative;background:#02090b;overflow:hidden}
+.tebicamp-rutube-frame iframe{display:block;position:absolute;inset:0;width:100%;height:100%;border:0;background:#02090b}
+.tebicamp-rutube-video .video-label{position:static!important;display:block!important;left:auto!important;right:auto!important;bottom:auto!important;padding:15px 18px 17px!important;background:linear-gradient(180deg,rgba(7,36,42,.98),rgba(5,28,33,.98))!important}
+.tebicamp-rutube-video .video-label b{display:block;font-size:15px;margin-bottom:4px}
+.tebicamp-rutube-video .video-label small{display:block;font-size:12px;color:#a9c1c4}
+.tebicamp-rutube-fallback{font-size:13px;line-height:1.55;color:#9fb6ba;margin:10px 0 0}
+.tebicamp-rutube-fallback a{color:#69dce0;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:640px){.tebicamp-rutube-video{border-radius:19px!important}.tebicamp-rutube-video .video-label{padding:13px 14px 15px!important}}
+</style>
+<style>[hidden]{display:none!important}body:not(.tb-ready) main{visibility:hidden}#tb-load-message{position:fixed;inset:0;display:grid;place-items:center;background:#061518;color:#e4ffff;z-index:999;font:16px Arial,sans-serif;padding:24px;text-align:center}body.tb-ready #tb-load-message{display:none}</style></head>
+<body><div id="tb-load-message" role="status">Загружаем карточку каравана…</div>
+<header class="topbar"><div class="wrap nav"><a class="brand" href="index.html"><img alt="" src="assets-05/img_c36196f50baa52d9b9c7.avif"/><b>Теория большого<br/>кемпинга</b></a><nav class="navlinks"><a href="#gallery">Фото</a><a href="#specs">Характеристики</a><a href="#description">Описание</a><a href="#video">Видео</a><a class="navcta open-contact" href="#contactModal">Связаться</a></nav></div></header>
+<main>
+<div class="wrap">
+<div class="breadcrumbs">Главная → Караваны → <span>Solifer Finlandia 630 · 2005</span></div>
+<section class="hero" id="gallery">
+<!-- APPROVED GALLERY MECHANICS: LOCKED FROM V9. Do not alter markup/CSS/JS without explicit user request. -->
+<div class="gallery gallery-v9-locked">
+<div class="gallery-main-wrap">
+<div class="gallery-viewport" id="galleryViewport"><div class="gallery-track" id="galleryTrack"><div class="gallery-slide" id="gallery-photo-cover" tabindex="-1"><img alt="Solifer Finlandia 630 — главное фото" src="assets-03/img_a83e9412c7818932b4cf.avif"/></div><div class="gallery-slide" id="gallery-photo-1" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 2" src="assets-02/img_833049133b2400105f49.avif"/></div><div class="gallery-slide" id="gallery-photo-2" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 3" src="assets-02/img_db5d30554289940218e5.avif"/></div><div class="gallery-slide" id="gallery-photo-3" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 4" src="assets-03/img_ae0891ba86b2a9d79ec8.avif"/></div><div class="gallery-slide" id="gallery-photo-4" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 5" src="assets-02/img_d3933e4b13d27ea340dd.avif"/></div><div class="gallery-slide" id="gallery-photo-5" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 6" src="assets-03/img_32935c5ce5270580c071.avif"/></div><div class="gallery-slide" id="gallery-photo-6" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 7" src="assets-01/img_834c4df2092c8af57f0f.avif"/></div><div class="gallery-slide" id="gallery-photo-7" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 8" src="assets-03/img_103277fc8bf07cf3ff4c.avif"/></div><div class="gallery-slide" id="gallery-photo-8" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 9" src="assets-02/img_9728d78f28170244e5ff.avif"/></div><div class="gallery-slide" id="gallery-photo-9" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 10" src="assets-03/img_e287c2411086387f800a.avif"/></div><div class="gallery-slide" id="gallery-photo-10" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 11" src="assets-03/img_c39de55838939e539639.avif"/></div><div class="gallery-slide" id="gallery-photo-11" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 12" src="assets-03/img_0477ec42339cd1e86449.avif"/></div><div class="gallery-slide" id="gallery-photo-12" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 13" src="assets-03/img_6163514374caea72d1fa.avif"/></div><div class="gallery-slide" id="gallery-photo-13" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 14" src="assets-02/img_938af8f353db090bfbd1.avif"/></div><div class="gallery-slide" id="gallery-photo-14" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 15" src="assets-02/img_abe8542e7c0c1cfacce9.avif"/></div><div class="gallery-slide" id="gallery-photo-15" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 16" src="assets-03/img_36cd6ba260f5a4b35321.avif"/></div><div class="gallery-slide" id="gallery-photo-16" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 17" src="assets-02/img_e406c4d251f90f5d54a3.avif"/></div><div class="gallery-slide" id="gallery-photo-17" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 18" src="assets-03/img_e981f09e11dea4054f18.avif"/></div><div class="gallery-slide" id="gallery-photo-18" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 19" src="assets-02/img_ed2e49656209cd6f347d.avif"/></div><div class="gallery-slide" id="gallery-photo-19" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 20" src="assets-03/img_0217f682ca428bc17367.avif"/></div><div class="gallery-slide" id="gallery-photo-20" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 21" src="assets-03/img_781aaf26674ea7b4be98.avif"/></div><div class="gallery-slide" id="gallery-photo-21" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 22" src="assets-01/img_812e96121202d33cb88d.avif"/></div><div class="gallery-slide" id="gallery-photo-22" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 23" src="assets-02/img_5132ec13a12d00865b7a.avif"/></div><div class="gallery-slide" id="gallery-photo-23" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 24" src="assets-02/img_28d332d0d80f6b9e7754.avif"/></div><div class="gallery-slide" id="gallery-photo-24" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 25" src="assets-02/img_950014c4c474b6ba4da7.avif"/></div><div class="gallery-slide" id="gallery-photo-25" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 26" src="assets-03/img_e19b5dc4d95577fb741f.avif"/></div><div class="gallery-slide" id="gallery-photo-26" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 27" src="assets-03/img_499fb2244590abf3b15b.avif"/></div><div class="gallery-slide" id="gallery-photo-27" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 28" src="assets-04/img_21fa916d121ae8547ae7.avif"/></div><div class="gallery-slide" id="gallery-photo-28" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 29" src="assets-03/img_cb3dea4a4c654cf91f4e.avif"/></div><div class="gallery-slide" id="gallery-photo-29" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 30" src="assets-03/img_7f90f6d1db1fa85ed161.avif"/></div><div class="gallery-slide" id="gallery-photo-30" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 31" src="assets-03/img_51421761f84b17ad713b.avif"/></div><div class="gallery-slide" id="gallery-photo-31" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 32" src="assets-02/img_672aa1381fdb244d0770.avif"/></div><div class="gallery-slide" id="gallery-photo-32" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 33" src="assets-03/img_69cd1bee325431a54b65.avif"/></div><div class="gallery-slide" id="gallery-photo-33" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 34" src="assets-03/img_e4eddc40ad4cef7a3e8d.avif"/></div><div class="gallery-slide" id="gallery-photo-34" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 35" src="assets-03/img_6bc58ae00efd0a0642df.avif"/></div><div class="gallery-slide" id="gallery-photo-35" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 36" src="assets-03/img_1c546c120d3f4162fb21.avif"/></div><div class="gallery-slide" id="gallery-photo-36" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 37" src="assets-02/img_37e1efc0298e8fb36b0d.avif"/></div><div class="gallery-slide" id="gallery-photo-37" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 38" src="assets-02/img_af0ed0eaf177ca6f8e49.avif"/></div><div class="gallery-slide" id="gallery-photo-38" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 39" src="assets-04/img_82d6532ab561d165c74d.avif"/></div><div class="gallery-slide" id="gallery-photo-39" tabindex="-1"><img alt="Solifer Finlandia 630 — фото 40" src="assets-04/img_f715d74cbc51cc1a4712.avif"/></div></div></div>
+<div class="photo-count" id="photoCount">1 / 40</div>
+</div>
+<div class="thumbs"><button aria-current="true" aria-label="Показать главное фото" aria-selected="true" class="thumb active" type="button"><img alt="Миниатюра фото 1" src="assets-05/img_26700a1f5573e796993a.avif"/></button><button aria-label="Показать фото 2" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 2" src="assets-05/img_44756354072c47142688.avif"/></button><button aria-label="Показать фото 3" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 3" src="assets-05/img_cd90fc4e2647cc1e57a0.avif"/></button><button aria-label="Показать фото 4" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 4" src="assets-05/img_22fc5fe4011a65ea5877.avif"/></button><button aria-label="Показать фото 5" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 5" src="assets-05/img_b058784b9a411af9b32f.avif"/></button><button aria-label="Показать фото 6" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 6" src="assets-05/img_1f4cb9ab6bee8ea0f939.avif"/></button><button aria-label="Показать фото 7" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 7" src="assets-05/img_2e8c2c9ee561378d5c5d.avif"/></button><button aria-label="Показать фото 8" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 8" src="assets-05/img_c0ff21797d446f4d68e3.avif"/></button><button aria-label="Показать фото 9" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 9" src="assets-03/img_ebc1a38dfdcf074b04ab.avif"/></button><button aria-label="Показать фото 10" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 10" src="assets-05/img_df69e0d15b024409099a.avif"/></button><button aria-label="Показать фото 11" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 11" src="assets-05/img_01c3da77efdac0bf8b31.avif"/></button><button aria-label="Показать фото 12" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 12" src="assets-05/img_d8bf3b33ed4dd09d7554.avif"/></button><button aria-label="Показать фото 13" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 13" src="assets-05/img_dc92d9d9158046f43ec7.avif"/></button><button aria-label="Показать фото 14" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 14" src="assets-05/img_207bfe185b8cfa5b4d64.avif"/></button><button aria-label="Показать фото 15" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 15" src="assets-05/img_00ac185405a891a6a094.avif"/></button><button aria-label="Показать фото 16" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 16" src="assets-05/img_43772dadaafa23775009.avif"/></button><button aria-label="Показать фото 17" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 17" src="assets-05/img_05f6d6e230aebd2103b5.avif"/></button><button aria-label="Показать фото 18" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 18" src="assets-05/img_43917431f01005425c37.avif"/></button><button aria-label="Показать фото 19" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 19" src="assets-05/img_e73774d97a6cbe02ea54.avif"/></button><button aria-label="Показать фото 20" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 20" src="assets-05/img_fc35f7a819d5a02274db.avif"/></button><button aria-label="Показать фото 21" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 21" src="assets-05/img_76d80931ca6f8e33a89e.avif"/></button><button aria-label="Показать фото 22" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 22" src="assets-05/img_a57853cfcdc10da762bf.avif"/></button><button aria-label="Показать фото 23" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 23" src="assets-05/img_a0ae9b4e50276494511a.avif"/></button><button aria-label="Показать фото 24" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 24" src="assets-05/img_239c2d8b8b5d74ea37f7.avif"/></button><button aria-label="Показать фото 25" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 25" src="assets-05/img_70553086fc4df9a5750e.avif"/></button><button aria-label="Показать фото 26" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 26" src="assets-05/img_d8178eb074f31ad8b56a.avif"/></button><button aria-label="Показать фото 27" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 27" src="assets-05/img_9892ff835e63746cc1b8.avif"/></button><button aria-label="Показать фото 28" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 28" src="assets-05/img_f1f060da8f5b77f8fdd4.avif"/></button><button aria-label="Показать фото 29" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 29" src="assets-05/img_5bf8024c91d280ad8a2d.avif"/></button><button aria-label="Показать фото 30" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 30" src="assets-05/img_ee4b59f9d526ed0cd657.avif"/></button><button aria-label="Показать фото 31" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 31" src="assets-05/img_18fd67c4fa50a4bfd1a2.avif"/></button><button aria-label="Показать фото 32" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 32" src="assets-05/img_d4a5fea0df47e80d28ec.avif"/></button><button aria-label="Показать фото 33" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 33" src="assets-05/img_f1c944c921a5c13a50b5.avif"/></button><button aria-label="Показать фото 34" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 34" src="assets-05/img_1a15ebfdbe465b906140.avif"/></button><button aria-label="Показать фото 35" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 35" src="assets-05/img_be6bc97350222aad2e7a.avif"/></button><button aria-label="Показать фото 36" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 36" src="assets-05/img_45d8637ac67b6e251e3a.avif"/></button><button aria-label="Показать фото 37" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 37" src="assets-05/img_4875ba6fd29cdb67bbfa.avif"/></button><button aria-label="Показать фото 38" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 38" src="assets-05/img_b7e5b5778308fb7fdeb6.avif"/></button><button aria-label="Показать фото 39" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 39" src="assets-05/img_187a3d0582288d91fbc8.avif"/></button><button aria-label="Показать фото 40" aria-selected="false" class="thumb" type="button"><img alt="Миниатюра фото 40" src="assets-05/img_11d389f4733a4404aec2.avif"/></button></div>
+</div>
+<aside class="product-panel">
+<div class="status-row"><span class="badge">В наличии</span><span class="badge secondary">Зимний</span><span class="badge secondary">Без пробега по РФ/РБ</span></div>
+<h1>Solifer Finlandia 630</h1><div class="year">2005 год · макс. масса 1450 кг · 2 оси</div>
+<div class="price">1 750 000 ₽</div>
+<div class="panel-actions"><a class="btn secondary" href="#specs">Характеристики</a><a class="btn primary open-contact" href="#contactModal">Связаться</a></div>
+</aside>
+</section>
+</div>
+<section class="section" id="description"><div class="wrap"><h2>О караване</h2>
+<p class="lead">Solifer Finlandia 630 2005 года — большой финский зимний караван, привезённый из Норвегии и не эксплуатировавшийся в России и Беларуси. Семь спальных мест, жидкостное отопление ALDE, тёплый пол и двухосное шасси делают его особенно интересным для семьи, длительных поездок и круглогодичного использования.</p>
+<div class="longtext">
+<p><strong>Скандинавская конструкция.</strong> Solifer создавался для северного климата: стены толщиной около 40 мм, жидкостная система отопления и радиаторы по периметру помогают поддерживать комфортную температуру в холодную погоду. До ввоза караван использовался в Норвегии, преимущественно в кемпинге.</p>
+<p><strong>Планировка.</strong> Внутри предусмотрено семь спальных мест, распределённых между несколькими жилыми зонами. Есть большая постоянная кровать, дополнительная верхняя спальная полка и просторные диванные группы, которые позволяют удобно разместить большую семью или компанию. В салоне много шкафов, полок и мест хранения.</p>
+<p><strong>Кухня.</strong> Полноценный кухонный блок включает трёхконфорочную газовую плиту, отдельный газовый духовой шкаф, мойку и большой двухкамерный холодильник Dometic с отдельной морозильной камерой.</p>
+<p><strong>Отопление и горячая вода.</strong> Установлена жидкостная система ALDE: газовый котёл, радиаторы по всему периметру и тёплый пол. Для горячей воды предусмотрен газовый бойлер объёмом 12 л.</p>
+<p><strong>Вода и автономность.</strong> Бак чистой воды — 40 л. Установлены солнечная панель 150 Вт и аккумулятор 80 А·ч. Газовый баллон — 27 л.</p>
+<p><strong>Санузел.</strong> Есть отдельная ванная комната с душевой зоной, умывальником, зеркалом и кассетным биотуалетом.</p>
+<p><strong>Стоянка и отдых.</strong> В комплекте полноразмерная палатка на всю длину каравана, создающая рядом с ним дополнительное закрытое пространство для отдыха и хранения вещей.</p>
+<p><strong>Состояние.</strong> Рама, подвеска и шины находятся в очень хорошем визуальном состоянии. Проверены ALDE, водоснабжение, газовая система, электрика, холодильник и бойлер — всё оборудование работает. Караван готов к осмотру и эксплуатации.</p>
+</div></div></section>
+<section class="section" id="specs"><div class="wrap"><h2>Характеристики</h2>
+<p class="lead">Основные размеры и параметры конкретного Solifer Finlandia 630.</p>
+<div class="grid-2 dimensions-grid-v10">
+<div class="info-card dimensions-card"><h3>Внешние характеристики</h3><div class="specs">
+<div class="spec"><span>Год выпуска</span><span>2005</span></div>
+<div class="spec"><span>Длина с дышлом</span><span>8 м</span></div>
+<div class="spec"><span>Ширина</span><span>2,50 м</span></div>
+<div class="spec"><span>Высота</span><span>2,62 м</span></div>
+<div class="spec"><span>Максимально разрешённая масса</span><span>1450 кг</span></div>
+<div class="spec"><span>Количество осей</span><span>2 оси · 4 колеса</span></div>
+</div></div>
+<div class="info-card dimensions-card"><h3>Внутренние характеристики</h3><div class="specs">
+<div class="spec"><span>Спальных мест</span><span>7</span></div>
+<div class="spec"><span>Толщина стен</span><span>40 мм</span></div>
+<div class="spec"><span>Тип каравана</span><span>Скандинавский зимний</span></div>
+</div></div>
+</div></div></section>
+<section class="section"><div class="wrap"><h2>Комплектация и оборудование</h2><div class="equipment">
+<div class="equip"><b><span class="dot"></span>ALDE</b><small>Жидкостное газовое отопление с радиаторами по периметру.</small></div>
+<div class="equip"><b><span class="dot"></span>Тёплый пол</b><small>Жидкостный, работает вместе с системой отопления.</small></div>
+<div class="equip"><b><span class="dot"></span>Газовый бойлер</b><small>12 литров для горячей воды.</small></div>
+<div class="equip"><b><span class="dot"></span>Большой холодильник Dometic</b><small>Двухкамерный, с отдельной морозильной камерой.</small></div>
+<div class="equip"><b><span class="dot"></span>Газовый духовой шкаф</b><small>Отдельная духовка в кухонном блоке.</small></div>
+<div class="equip"><b><span class="dot"></span>Газовая плита</b><small>3 конфорки.</small></div>
+<div class="equip"><b><span class="dot"></span>Кухонная мойка</b><small>Отдельная мойка с крышкой и рабочей поверхностью.</small></div>
+<div class="equip"><b><span class="dot"></span>Солнечная панель</b><small>150 Вт.</small></div>
+<div class="equip"><b><span class="dot"></span>Аккумулятор</b><small>80 А·ч.</small></div>
+<div class="equip"><b><span class="dot"></span>Бак чистой воды</b><small>40 литров.</small></div>
+<div class="equip"><b><span class="dot"></span>Душ</b><small>В отдельной ванной комнате.</small></div>
+<div class="equip"><b><span class="dot"></span>Кассетный биотуалет</b><small>Сервисный кассетный туалет.</small></div>
+<div class="equip"><b><span class="dot"></span>Умывальник</b><small>С зеркалом и местами хранения.</small></div>
+<div class="equip"><b><span class="dot"></span>Полноразмерная палатка</b><small>На всю длину каравана.</small></div>
+<div class="equip"><b><span class="dot"></span>Двухосное шасси</b><small>2 оси · 4 колеса.</small></div>
+<div class="equip"><b><span class="dot"></span>Много мест хранения</b><small>Высокие шкафы, верхние секции, полки и выдвижные ящики.</small></div>
+</div></div></section>
+<section class="section" id="video"><div class="wrap">
+<h2>Видеообзор</h2>
+<p class="lead">Посмотрите короткий видеообзор Solifer Finlandia 630.</p>
+<div class="video-demo actual-video tebicamp-rutube-video">
+<div class="tebicamp-rutube-frame">
+<iframe src="https://rutube.ru/play/embed/a25f35420f1c81d2265aea7719964c9c" title="Solifer Finlandia 630 — видеообзор" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+<div class="video-label"><b>Solifer Finlandia 630 — видеообзор</b><small>Видео с RuTube — смотрите прямо на этой странице</small></div>
+</div>
+<p class="tebicamp-rutube-fallback">Если плеер не загружается, <a href="https://rutube.ru/shorts/a25f35420f1c81d2265aea7719964c9c/" target="_blank" rel="noopener noreferrer">откройте видео на RuTube</a>.</p>
+</div></section>
+<section class="section"><div class="wrap"><div class="grid-2">
+<div class="info-card"><h3>Состояние и проверка</h3>
+<div class="spec"><span>Рама, подвеска и шины</span><span>Очень хорошее визуальное состояние</span></div>
+<div class="spec"><span>Отопление ALDE</span><span>Проверено, работает</span></div>
+<div class="spec"><span>Газовая система</span><span>Проверена, работает</span></div>
+<div class="spec"><span>Водоснабжение</span><span>Проверено, работает</span></div>
+<div class="spec"><span>Электрика</span><span>Проверена, работает</span></div>
+<div class="spec"><span>Холодильник</span><span>Проверен, работает</span></div>
+<div class="spec"><span>Бойлер</span><span>Проверен, работает</span></div>
+</div>
+<div class="info-card"><h3>Документы и осмотр</h3>
+<div class="spec"><span>Страна покупки</span><span>Норвегия</span></div>
+<div class="spec"><span>Пробег по РФ / РБ</span><span>Нет</span></div>
+<div class="spec"><span>Документы</span><span>ПТС, СБКТС, таможенная декларация</span></div>
+<div class="spec"><span>Осмотр</span><span>Доступен</span></div>
+<div class="spec"><span>Доставка по России</span><span>Возможна</span></div>
+</div></div></div></section>
+<section class="section"><div class="wrap"><div class="cta"><div><h2>Понравился Solifer Finlandia 630?</h2><p>Задайте вопрос или договоритесь об осмотре. Выберите удобный способ связи.</p></div><a class="btn primary open-contact" href="#contactModal">Связаться с нами</a></div></div></section>
+<section class="section similar-section"><div class="wrap"><h2>Похожие караваны</h2><p class="lead similar-lead">Другие караваны, которые сейчас можно посмотреть.</p><div class="similar">
+<a aria-label="Открыть карточку Hymer Eriba Nova 465G" class="similar-card" data-tebicamp-product="hymer" href="hymer.html">
+<div class="similar-photo"><img alt="Hymer Eriba Nova 465G" src="assets-04/img_8eb684cf51f3683a05bb.avif"/></div><div class="similar-body"><div class="similar-status">В наличии</div><h3>Hymer Eriba Nova 465G</h3><p>2007 · 1600 кг</p><strong>1 499 000 ₽</strong></div></a>
+<a aria-label="Открыть карточку Hobby Excellent Easy 540" class="similar-card" data-tebicamp-product="hobby" href="hobby.html">
+<div class="similar-photo"><img alt="Hobby Excellent Easy 540" src="assets-05/img_af72fed2eb93f6995263.avif"/></div><div class="similar-body"><div class="similar-status">В наличии</div><h3>Hobby Excellent Easy 540</h3><p>2003 · 1500 кг</p><strong>1 199 000 ₽</strong></div></a>
+</div></div></section>
+</main>
+<footer class="footer"><div class="wrap">Прототип товарной страницы · Теория большого кемпинга</div></footer>
+<div class="modal-backdrop" id="contactModal"><div class="modal"><a aria-label="Закрыть" class="close" href="#">×</a><h3>Как вам удобнее связаться?</h3><p>Выберите способ связи.</p><div class="contact-list contact-list-v34"><a href="https://t.me/Mikhail_Igoshev" rel="noopener" target="_blank"><span aria-hidden="true" class="tb-brand-icon telegram"><svg class="tb-brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12" fill="#fff"/><path fill="#229ED9" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></span><strong>Telegram</strong></a><a href="https://www.avito.ru/brands/6ffa36b3d1b1782c004bfdda2e42d545?src=sharing" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="tb-brand-icon avito"><svg class="tb-brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9.46" cy="5.58" r="1.96" fill="#965EEB"/><circle cx="16.32" cy="7.91" r="4.27" fill="#00AAFF"/><circle cx="8.53" cy="14.9" r="5.24" fill="#00D66A"/><circle cx="17.7" cy="15.72" r="3.06" fill="#FF405C"/></svg></span><strong>Авито</strong></a><a href="tel:+79261611143"><span aria-hidden="true" class="tb-brand-icon call"><svg class="tb-brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.4 3.7c-.6-.7-1.5-.7-2.2-.1L2.7 5.2c-.9.9-1 2.4-.5 4.1 1.5 5.1 6.5 10.1 11.6 11.6 1.7.5 3.2.4 4.1-.5l1.6-1.5c.6-.7.6-1.6-.1-2.2l-3.1-2.5c-.6-.5-1.4-.4-2 .1l-1.4 1.3a16.4 16.4 0 0 1-4.5-4.5l1.3-1.4c.5-.6.6-1.4.1-2L6.4 3.7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg></span><strong>Позвонить</strong></a><a href="https://max.ru/u/f9LHodD0cOJiRgRCtS3AyCzgzmAvNwEFGILRyKDIdDW09dQNtsURGi65IlA" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="tb-brand-icon max"><svg class="tb-brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#fff" fill-rule="evenodd" d="M24 4.3C12.4 4.3 4.8 12.4 4.8 23.9c0 5.9 1.8 11.1 5.2 15.1.5.6.7 1.4.7 2.1l.2 2.5c.2 2.3 2.1 3.2 4.1 2.4 2.6-1.1 4.6-2.6 6.2-4.3 1.2.2 2.4.3 3.6.3 11.5 0 19.3-8.4 19.3-19.1C44.1 12.7 35.9 4.3 24 4.3Zm.2 9.1c-6.3 0-10.3 4.4-10.3 10.6 0 3.2.8 6.2 2.5 8.4.6.8 1.2.9 2 .4l2.8-1.9c1.8 1.3 4 2 6.3 2 5.8 0 9.6-4.1 9.6-9.2 0-6.1-4.9-10.9-10.9-10.9Z"/></svg></span><strong>MAX</strong></a></div></div></div>
+<div aria-hidden="true" aria-label="Полноэкранный просмотр фотографий" aria-modal="true" class="gallery-lightbox" hidden="" id="galleryLightbox" role="dialog">
+<button aria-label="Закрыть полноэкранный просмотр" class="gallery-lightbox-close" id="galleryLightboxClose" type="button">×</button>
+<button aria-label="Предыдущее фото" class="gallery-lightbox-arrow gallery-lightbox-prev" id="galleryLightboxPrev" type="button">‹</button>
+<div class="gallery-lightbox-stage" id="galleryLightboxStage"><div class="gallery-lightbox-track" id="galleryLightboxTrack"></div></div>
+<button aria-label="Следующее фото" class="gallery-lightbox-arrow gallery-lightbox-next" id="galleryLightboxNext" type="button">›</button>
+<button aria-label="Увеличить фото" class="gallery-lightbox-zoom" id="galleryLightboxZoom" type="button">＋</button>
+<div class="gallery-lightbox-count" id="galleryLightboxCount">1 / 5</div>
+<div class="gallery-lightbox-hint">Свайпайте фото · нажмите ＋ или увеличьте двумя пальцами</div>
+</div><script id="gallery-v20-sync">
+window.tebicampInitGallery = function(){
+  var viewport=document.getElementById('galleryViewport');
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.gallery-slide'));
+  var thumbsWrap=document.querySelector('.thumbs');
+  var thumbs=Array.prototype.slice.call(document.querySelectorAll('.thumbs .thumb'));
+  var count=document.getElementById('photoCount');
+  var lightbox=document.getElementById('galleryLightbox');
+  var lightboxStage=document.getElementById('galleryLightboxStage');
+  var lightboxTrack=document.getElementById('galleryLightboxTrack');
+  var lightboxCount=document.getElementById('galleryLightboxCount');
+  var closeBtn=document.getElementById('galleryLightboxClose');
+  var prevBtn=document.getElementById('galleryLightboxPrev');
+  var nextBtn=document.getElementById('galleryLightboxNext');
+  var zoomBtn=document.getElementById('galleryLightboxZoom');
+  if(!viewport||!slides.length||!thumbs.length)return;
+
+  var current=0, raf=0, settle=0, lbSettle=0;
+  var lbZoom=1, lbPanX=0, lbPanY=0;
+  var pinchActive=false, pinchStartDist=0, pinchStartZoom=1;
+  var panStart=null, panBaseX=0, panBaseY=0;
+
+  function clamp(i){return Math.max(0,Math.min(i,slides.length-1));}
+  function slideLeft(i){return Math.max(0,slides[i].offsetLeft-slides[0].offsetLeft);}
+  function nearestIndex(){
+    var x=viewport.scrollLeft,best=0,bestDist=Infinity;
+    slides.forEach(function(s,i){var d=Math.abs(slideLeft(i)-x);if(d<bestDist){bestDist=d;best=i;}});
+    return clamp(best);
+  }
+  function revealThumb(i){
+    if(!thumbsWrap||!thumbs[i])return;
+    var t=thumbs[i],left=t.offsetLeft,right=left+t.offsetWidth;
+    var visL=thumbsWrap.scrollLeft,visR=visL+thumbsWrap.clientWidth;
+    if(left<visL)thumbsWrap.scrollLeft=Math.max(0,left-8);
+    else if(right>visR)thumbsWrap.scrollLeft=Math.max(0,right-thumbsWrap.clientWidth+8);
+  }
+  function updateCounts(i){
+    var label=(i+1)+' / '+slides.length;
+    if(count)count.textContent=label;
+    if(lightboxCount)lightboxCount.textContent=label;
+  }
+  function setActive(i,moveThumb){
+    i=clamp(i);current=i;
+    thumbs.forEach(function(t,n){
+      var on=n===i;t.classList.toggle('active',on);t.setAttribute('aria-selected',on?'true':'false');
+      if(on)t.setAttribute('aria-current','true');else t.removeAttribute('aria-current');
+    });
+    updateCounts(i);if(moveThumb)revealThumb(i);
+  }
+  function goTo(i){
+    i=clamp(i);var target=slideLeft(i);viewport.scrollLeft=target;setActive(i,true);
+    requestAnimationFrame(function(){viewport.scrollLeft=target;setActive(i,true);});
+  }
+  thumbs.forEach(function(t,i){
+    t.type='button';t.dataset.index=String(i);
+    t.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();goTo(i);});
+  });
+  function syncMainGallery(){
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(function(){var i=nearestIndex();if(i!==current)setActive(i,true);});
+    clearTimeout(settle);
+    settle=setTimeout(function(){setActive(nearestIndex(),true);},110);
+  }
+  viewport.addEventListener('scroll',syncMainGallery,{passive:true});
+  if('onscrollend' in viewport)viewport.addEventListener('scrollend',function(){setActive(nearestIndex(),true);});
+
+  function slideImage(i){return slides[i]?slides[i].querySelector('img'):null;}
+  function lbImage(i){
+    if(!lightboxTrack)return null;var s=lightboxTrack.children[i];return s?s.querySelector('img'):null;
+  }
+  function buildLightbox(){
+    if(!lightboxTrack||lightboxTrack.children.length===slides.length)return;
+    lightboxTrack.innerHTML='';
+    slides.forEach(function(slide,i){
+      var src=slideImage(i),shell=document.createElement('div'),img=document.createElement('img');
+      shell.className='gallery-lightbox-slide';img.className='gallery-lightbox-image';img.draggable=false;
+      img.alt=src?(src.alt||('Фото '+(i+1))):('Фото '+(i+1));img.src=src?(src.currentSrc||src.src):'';
+      shell.appendChild(img);lightboxTrack.appendChild(shell);
+    });
+  }
+  function lbWidth(){return Math.max(1,lightboxStage?lightboxStage.clientWidth:window.innerWidth);}
+  function lbIndexFromScroll(){return clamp(Math.round((lightboxStage?lightboxStage.scrollLeft:0)/lbWidth()));}
+  function setLbScroll(i,behavior){
+    if(!lightboxStage)return;i=clamp(i);var left=i*lbWidth();
+    try{lightboxStage.scrollTo({left:left,top:0,behavior:behavior||'auto'});}catch(e){lightboxStage.scrollLeft=left;}
+  }
+  function applyZoom(){
+    var img=lbImage(current);if(!img)return;
+    img.style.transform='translate3d('+lbPanX+'px,'+lbPanY+'px,0) scale('+lbZoom+')';
+    if(lightboxStage)lightboxStage.classList.toggle('is-zoomed',lbZoom>1.01);
+    if(zoomBtn){zoomBtn.textContent=lbZoom>1.01?'−':'＋';zoomBtn.setAttribute('aria-label',lbZoom>1.01?'Уменьшить фото':'Увеличить фото');}
+  }
+  function resetZoom(){
+    var img=lbImage(current);if(img)img.style.transform='translate3d(0,0,0) scale(1)';
+    lbZoom=1;lbPanX=0;lbPanY=0;pinchActive=false;panStart=null;
+    if(lightboxStage)lightboxStage.classList.remove('is-zoomed');
+    if(zoomBtn){zoomBtn.textContent='＋';zoomBtn.setAttribute('aria-label','Увеличить фото');}
+  }
+  function syncMainFromLightbox(i){
+    i=clamp(i);var target=slideLeft(i);viewport.scrollLeft=target;setActive(i,true);
+    requestAnimationFrame(function(){viewport.scrollLeft=target;});
+  }
+  function commitLbIndex(i,syncMain){
+    i=clamp(i);
+    if(i!==current)resetZoom();
+    current=i;setActive(i,true);
+    if(syncMain)syncMainFromLightbox(i);
+  }
+  function openLightbox(i){
+    if(!lightbox)return;buildLightbox();resetZoom();
+    lightbox.hidden=false;lightbox.setAttribute('aria-hidden','false');document.body.classList.add('gallery-lightbox-open');lightbox.classList.add('open');
+    current=clamp(i);setActive(current,true);
+    requestAnimationFrame(function(){setLbScroll(current,'auto');requestAnimationFrame(function(){setLbScroll(current,'auto');});});
+  }
+  function closeLightbox(){
+    if(!lightbox)return;
+    var closingIndex=lbIndexFromScroll();
+    commitLbIndex(closingIndex,false);resetZoom();
+    lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');document.body.classList.remove('gallery-lightbox-open');
+    setTimeout(function(){lightbox.hidden=true;goTo(closingIndex);},160);
+    setTimeout(function(){goTo(closingIndex);},360);
+  }
+  function lbGo(i){
+    if(lbZoom>1.01)resetZoom();i=clamp(i);current=i;setActive(i,true);setLbScroll(i,'smooth');
+  }
+
+  slides.forEach(function(slide,i){
+    var img=slide.querySelector('img');if(!img)return;
+    img.setAttribute('role','button');img.setAttribute('tabindex','0');img.setAttribute('aria-label','Открыть фото '+(i+1)+' на весь экран');
+    img.addEventListener('click',function(e){e.preventDefault();openLightbox(i);});
+    img.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLightbox(i);}});
+  });
+  if(closeBtn)closeBtn.addEventListener('click',function(e){e.stopPropagation();closeLightbox();});
+  if(prevBtn)prevBtn.addEventListener('click',function(e){e.stopPropagation();if(current>0)lbGo(current-1);});
+  if(nextBtn)nextBtn.addEventListener('click',function(e){e.stopPropagation();if(current<slides.length-1)lbGo(current+1);});
+  if(zoomBtn)zoomBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(lbZoom>1.01)resetZoom();else{lbZoom=2;lbPanX=0;lbPanY=0;applyZoom();}
+  });
+  if(lightbox)lightbox.addEventListener('click',function(e){if(e.target===lightbox)closeLightbox();});
+
+  if(lightboxStage){
+    /* One-finger swipe at 1x is 100% native browser scrolling. This listener only
+       observes the result; it never prevents that gesture. */
+    lightboxStage.addEventListener('scroll',function(){
+      if(lbZoom>1.01)return;
+      var i=lbIndexFromScroll();
+      if(i!==current){current=i;setActive(i,true);}
+      clearTimeout(lbSettle);
+      lbSettle=setTimeout(function(){var n=lbIndexFromScroll();commitLbIndex(n,true);},120);
+    },{passive:true});
+    if('onscrollend' in lightboxStage)lightboxStage.addEventListener('scrollend',function(){if(lbZoom<=1.01)commitLbIndex(lbIndexFromScroll(),true);});
+
+    /* Pinch and pan are intercepted only when two fingers are used, or while zoomed. */
+    lightboxStage.addEventListener('touchstart',function(e){
+      if(e.touches.length===2){
+        var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
+        pinchStartDist=Math.max(1,Math.hypot(dx,dy));pinchStartZoom=lbZoom;pinchActive=true;panStart=null;e.preventDefault();
+      }else if(e.touches.length===1 && lbZoom>1.01){
+        panStart={x:e.touches[0].clientX,y:e.touches[0].clientY};panBaseX=lbPanX;panBaseY=lbPanY;e.preventDefault();
+      }
+    },{passive:false});
+    lightboxStage.addEventListener('touchmove',function(e){
+      if(pinchActive && e.touches.length===2){
+        var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
+        var d=Math.max(1,Math.hypot(dx,dy));lbZoom=Math.max(1,Math.min(4,pinchStartZoom*(d/pinchStartDist)));
+        if(lbZoom<=1.01){lbZoom=1;lbPanX=0;lbPanY=0;}applyZoom();e.preventDefault();
+      }else if(lbZoom>1.01 && panStart && e.touches.length===1){
+        lbPanX=panBaseX+(e.touches[0].clientX-panStart.x);lbPanY=panBaseY+(e.touches[0].clientY-panStart.y);applyZoom();e.preventDefault();
+      }
+    },{passive:false});
+    lightboxStage.addEventListener('touchend',function(e){
+      if(e.touches.length<2)pinchActive=false;
+      if(e.touches.length===0)panStart=null;
+      if(lbZoom<=1.01){lbZoom=1;lbPanX=0;lbPanY=0;applyZoom();}
+    },{passive:true});
+    lightboxStage.addEventListener('touchcancel',function(){pinchActive=false;panStart=null;},{passive:true});
+    lightboxStage.addEventListener('dblclick',function(e){
+      e.preventDefault();if(lbZoom>1.01)resetZoom();else{lbZoom=2;lbPanX=0;lbPanY=0;applyZoom();}
+    });
+  }
+
+  document.addEventListener('keydown',function(e){
+    if(!lightbox||lightbox.hidden)return;
+    if(e.key==='Escape')closeLightbox();
+    else if(e.key==='ArrowLeft'&&lbZoom<=1.01&&current>0)lbGo(current-1);
+    else if(e.key==='ArrowRight'&&lbZoom<=1.01&&current<slides.length-1)lbGo(current+1);
+  });
+  window.addEventListener('resize',function(){goTo(current);if(lightbox&&!lightbox.hidden)setLbScroll(current,'auto');});
+  setActive(0,false);
+};
+</script>
+<script id="tebicamp-single-file-router-child">
+(function(){document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.similar-card[data-tebicamp-product]');if(!a)return;if(window.parent!==window){e.preventDefault();var product=a.getAttribute('data-tebicamp-product');try{window.parent.postMessage({type:'tebicamp-product-nav',product:product},'*');}catch(err){}}},true);})();
+</script>
+<script src="catalog-data.js"></script><script src="catalog-api.js"></script><script src="caravan-detail.js"></script></body></html>
