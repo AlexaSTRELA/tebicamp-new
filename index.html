@@ -2736,7 +2736,7 @@ transform: none !important;
     link.addEventListener('click', function (event) {
       event.preventDefault();
       previousFocus = document.activeElement;
-      title.textContent = link.textContent.trim();
+      title.textContent = /соглас/i.test(link.textContent) ? 'Согласие на обработку персональных данных' : 'Политика обработки персональных данных';
       frame.src = link.href;
       overlay.classList.add('open');
       close.focus();
