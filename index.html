@@ -2600,5 +2600,59 @@ document.addEventListener('click', function(event) {
 <!-- Конец формы TeBiCamp -->
 
 
+
+<!-- TeBiCamp: restore visible catalogue buttons and connect enquiries to Yandex Forms. -->
+<style id="tbc-stock-buttons-fix">
+  #caravans .cards .card .actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    position: relative !important;
+    z-index: 5 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin-top: 12px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  #caravans .cards .card .actions .btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 46px !important;
+    height: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 11px 8px !important;
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    pointer-events: auto !important;
+  }
+  #caravans .cards .card .actions .btn.secondary { display: flex !important; }
+  @media (max-width: 680px) {
+    #caravans .cards .card .actions { grid-template-columns: 1fr !important; }
+  }
+</style>
+<script id="tbc-stock-buttons-behaviour">
+(function () {
+  // Event delegation also covers catalogue cards recreated by home-catalog.js.
+  document.addEventListener('click', function (event) {
+    var enquiry = event.target.closest('#caravans .card .actions .open-contact-modal');
+    if (!enquiry) return;
+    event.preventDefault();
+    event.stopPropagation();
+    var callback = document.getElementById('tbcOpenCall');
+    if (callback) callback.click();
+  }, true);
+})();
+</script>
+
 </body>
 </html>
