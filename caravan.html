@@ -682,4 +682,190 @@ window.tebicampInitGallery = function(){
 <script id="tebicamp-single-file-router-child">
 (function(){document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.similar-card[data-tebicamp-product]');if(!a)return;if(window.parent!==window){e.preventDefault();var product=a.getAttribute('data-tebicamp-product');try{window.parent.postMessage({type:'tebicamp-product-nav',product:product},'*');}catch(err){}}},true);})();
 </script>
-<script src="catalog-data.js"></script><script src="catalog-api.js"></script><script src="caravan-detail.js"></script></body></html>
+<script src="catalog-data.js"></script><script src="catalog-api.js"></script><script src="caravan-detail.js"></script>
+<!-- TeBiCamp: обратный звонок на странице каравана -->
+<style>
+  .tbc-detail-callback-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #30d4d7;
+    border-radius: 14px;
+    background: #30d4d7;
+    color: #06272d;
+    font: 800 15px Arial, sans-serif;
+    cursor: pointer;
+  }
+  .tbc-detail-layer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10060;
+    background: rgba(2,19,24,.78);
+    padding: 15px;
+    align-items: center;
+    justify-content: center;
+  }
+  .tbc-detail-layer.open { display: flex; }
+  .tbc-detail-box {
+    width: min(100%,620px);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 20px;
+    background: white;
+    color: #12363b;
+    position: relative;
+    font-family: Arial,sans-serif;
+  }
+  .tbc-detail-box h2 {
+    margin: 0 42px 12px 0;
+    font-size: 25px;
+  }
+  .tbc-detail-close {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    border: 0;
+    border-radius: 10px;
+    background: #11c6cf;
+    color: #06272d;
+    padding: 10px 13px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .tbc-detail-doclinks {
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  .tbc-detail-doclinks a { color: #087e89; }
+  .tbc-detail-docbox {
+    width: min(100%,850px);
+    height: 90vh;
+    background: white;
+    color: #12363b;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tbc-detail-dochead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px;
+    font: bold 16px Arial,sans-serif;
+  }
+  .tbc-detail-dochead button {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px;
+    background: #11c6cf;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tbc-detail-docbox iframe {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border: 0;
+  }
+  @media(max-width:600px) {
+    .tbc-detail-box { padding: 20px 14px; }
+    .tbc-detail-dochead { font-size: 13px; }
+  }
+</style>
+
+<div id="tbcDetailCall" class="tbc-detail-layer">
+  <div class="tbc-detail-box" role="dialog" aria-modal="true"
+       aria-label="Заказать звонок">
+    <button type="button" class="tbc-detail-close"
+            id="tbcDetailCallClose">×</button>
+    <h2>Заказать звонок</h2>
+    <p>Оставьте имя и телефон — мы свяжемся с вами.</p>
+    <p class="tbc-detail-doclinks">
+      Ознакомьтесь с
+      <a href="/privacy.html" data-tbc-doc="Политика обработки персональных данных">Политикой обработки персональных данных</a>
+      и
+      <a href="/consent.html" data-tbc-doc="Согласие на обработку персональных данных">текстом согласия</a>.
+      Согласие подтверждается галочкой в форме.
+    </p>
+    <iframe
+      src="https://forms.yandex.ru/u/6adf7a782c4f8945fe916cc2?iframe=1"
+      title="Заявка TeBiCamp"
+      style="width:100%;height:540px;border:0;background:white"
+      loading="lazy"></iframe>
+  </div>
+</div>
+
+<div id="tbcDetailDoc" class="tbc-detail-layer">
+  <div class="tbc-detail-docbox" role="dialog" aria-modal="true">
+    <div class="tbc-detail-dochead">
+      <span id="tbcDetailDocTitle"></span>
+      <button type="button" id="tbcDetailDocClose">× Закрыть</button>
+    </div>
+    <iframe id="tbcDetailDocFrame" title="Документ TeBiCamp"></iframe>
+  </div>
+</div>
+
+<script>
+(function () {
+  const list = document.querySelector('#contactModal .contact-list');
+  if (!list) return;
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'tbc-detail-callback-btn';
+  button.textContent = 'Заказать звонок';
+  list.appendChild(button);
+
+  const call = document.getElementById('tbcDetailCall');
+  const doc = document.getElementById('tbcDetailDoc');
+  const frame = document.getElementById('tbcDetailDocFrame');
+  const docTitle = document.getElementById('tbcDetailDocTitle');
+
+  button.addEventListener('click', function () {
+    document.getElementById('contactModal').classList.remove('open');
+    call.classList.add('open');
+  });
+
+  document.getElementById('tbcDetailCallClose').onclick = function () {
+    call.classList.remove('open');
+  };
+
+  call.querySelectorAll('[data-tbc-doc]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      docTitle.textContent = link.dataset.tbcDoc;
+      frame.src = link.href;
+      doc.classList.add('open');
+    });
+  });
+
+  function closeDoc() {
+    doc.classList.remove('open');
+    frame.removeAttribute('src');
+  }
+
+  document.getElementById('tbcDetailDocClose').onclick = closeDoc;
+
+  doc.addEventListener('click', function (event) {
+    if (event.target === doc) closeDoc();
+  });
+
+  call.addEventListener('click', function (event) {
+    if (event.target === call) call.classList.remove('open');
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    if (doc.classList.contains('open')) closeDoc();
+    else call.classList.remove('open');
+  });
+})();
+</script>
+<!-- Конец блока обратного звонка -->
+</body></html>
