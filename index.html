@@ -2438,5 +2438,24 @@ const form=document.getElementById('tbRvForm'),err=document.getElementById('tbRv
 <script src="catalog-data.js"></script>
 <script src="catalog-api.js"></script>
 <script src="home-catalog.js"></script>
+  <!-- Отслеживание переходов на Авито -->
+<script>
+document.addEventListener('click', function(event) {
+  const link = event.target.closest('a[href]');
+  if (!link) return;
+
+  try {
+    const url = new URL(link.href);
+    if (
+      url.hostname === 'avito.ru' ||
+      url.hostname.endsWith('.avito.ru')
+    ) {
+      if (typeof ym === 'function') {
+        ym(111944756, 'reachGoal', 'avito_click');
+      }
+    }
+  } catch (e) {}
+});
+</script>
 </body>
 </html>
