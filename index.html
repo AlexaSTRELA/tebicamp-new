@@ -2659,5 +2659,112 @@ transform: none !important;
 })();
 </script>
 
+<!-- TeBiCamp: просмотр документов без закрытия формы -->
+<style>
+  .tbc-doc-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10100;
+    background: rgba(0, 18, 23, .78);
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+  }
+  .tbc-doc-overlay.open { display: flex; }
+
+  .tbc-doc-window {
+    width: min(100%, 850px);
+    height: min(90vh, 900px);
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: #12363b;
+    box-shadow: 0 25px 80px rgba(0,0,0,.4);
+  }
+  .tbc-doc-header {
+    padding: 15px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #dcebed;
+    font: 700 16px Arial, sans-serif;
+  }
+  .tbc-doc-close {
+    border: 0;
+    border-radius: 10px;
+    background: #11c6cf;
+    color: #06272d;
+    padding: 10px 15px;
+    font: 700 14px Arial, sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tbc-doc-frame {
+    width: 100%;
+    flex: 1;
+    border: 0;
+    background: white;
+  }
+</style>
+
+<div class="tbc-doc-overlay" id="tbcDocOverlay">
+  <div class="tbc-doc-window" role="dialog"
+       aria-modal="true" aria-labelledby="tbcDocTitle">
+    <div class="tbc-doc-header">
+      <span id="tbcDocTitle">Документ</span>
+      <button type="button" class="tbc-doc-close"
+              id="tbcDocClose">× Закрыть</button>
+    </div>
+    <iframe class="tbc-doc-frame" id="tbcDocFrame"
+            title="Документ TeBiCamp"></iframe>
+  </div>
+</div>
+
+<script>
+(function () {
+  const overlay = document.getElementById('tbcDocOverlay');
+  const frame = document.getElementById('tbcDocFrame');
+  const title = document.getElementById('tbcDocTitle');
+  const close = document.getElementById('tbcDocClose');
+  let previousFocus = null;
+
+  document.querySelectorAll('.tbc-call-docs a').forEach(link => {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      previousFocus = document.activeElement;
+      title.textContent = link.textContent.trim();
+      frame.src = link.href;
+      overlay.classList.add('open');
+      close.focus();
+    });
+  });
+
+  function closeDocument() {
+    overlay.classList.remove('open');
+    frame.removeAttribute('src');
+    if (previousFocus) previousFocus.focus();
+  }
+
+  close.addEventListener('click', closeDocument);
+
+  overlay.addEventListener('click', function (event) {
+    if (event.target === overlay) closeDocument();
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' &&
+        overlay.classList.contains('open')) {
+      event.preventDefault();
+      closeDocument();
+    }
+  });
+})();
+</script>
+<!-- Конец просмотра документов -->
+
 </body>
 </html>
