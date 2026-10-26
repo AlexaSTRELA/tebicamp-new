@@ -2767,22 +2767,21 @@ transform: none !important;
 </script>
 <!-- Конец просмотра документов -->
 
-<script id="tbc-callback-success-handler">
+<script id="tbc-callback-reset-handler">
 (function () {
-  var selector = '#tbcCallOverlay';
-  var modal = document.querySelector(selector);
+  var modal = document.querySelector('#tbcCallOverlay');
   if (!modal) return;
   var frame = modal.querySelector('iframe[src*="forms.yandex.ru/u/"]');
   if (!frame) return;
-  var initialSrc = frame.getAttribute('src');
-  window.addEventListener('message', function (event) {
-    if (event.origin !== window.location.origin ||
-        event.source !== frame.contentWindow ||
-        !event.data || event.data.type !== 'tebicamp:callback-success') return;
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('tb-modal-open');
-    frame.setAttribute('src', initialSrc);
-  });
+  var formUrl = frame.getAttribute('src');
+  var openButton = document.querySelector('#tbcOpenCall');
+  // Reload the embedded form on each opening so a previous submission
+  // does not leave the visitor on the "send again" confirmation screen.
+  if (openButton) {
+    openButton.addEventListener('click', function () {
+      frame.src = formUrl + '&tbc_open=' + Date.now();
+    });
+  }
 })();
 </script>
 </body>
