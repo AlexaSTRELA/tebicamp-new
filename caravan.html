@@ -868,4 +868,22 @@ float: right;
 })();
 </script>
 <!-- Конец блока обратного звонка -->
+<script id="tbc-callback-success-handler">
+(function () {
+  var selector = '#tbcDetailCall';
+  var modal = document.querySelector(selector);
+  if (!modal) return;
+  var frame = modal.querySelector('iframe[src*="forms.yandex.ru/u/"]');
+  if (!frame) return;
+  var initialSrc = frame.getAttribute('src');
+  window.addEventListener('message', function (event) {
+    if (event.origin !== window.location.origin ||
+        event.source !== frame.contentWindow ||
+        !event.data || event.data.type !== 'tebicamp:callback-success') return;
+    modal.classList.remove('open');
+    
+    frame.setAttribute('src', initialSrc);
+  });
+})();
+</script>
 </body></html>
