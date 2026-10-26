@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заявка отправлена — Теория большого кемпинга</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    *{box-sizing:border-box}
+    body{min-height:100vh;margin:0;display:grid;place-items:center;background:#071e24;color:#f0fbfc;font-family:Arial,Helvetica,sans-serif;text-align:center;padding:24px}
+    main{max-width:420px}
+    h1{font-size:26px;margin:0 0 12px}
+    p{font-size:16px;line-height:1.6;color:#c4dadd}
+    a{display:inline-block;margin-top:16px;color:#071e24;background:#1bcbd4;border-radius:12px;padding:12px 20px;text-decoration:none;font-weight:bold}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Спасибо! Заявка отправлена.</h1>
+    <p>Мы получили вашу заявку и скоро свяжемся с вами.</p>
+    <a href="/" target="_top">Вернуться на сайт</a>
+  </main>
+  <script>
+    // This page is opened only after Yandex Forms successfully submits the callback.
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'tebicamp:callback-success'}, window.location.origin);
+    }
+  </script>
+</body>
+</html>
