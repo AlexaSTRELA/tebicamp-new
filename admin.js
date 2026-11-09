@@ -2,6 +2,9 @@
 (()=>{
  'use strict';
  const C=window.TB_CATALOG;
+ const API_URL='https://gtbaelazxrapzdkygbsh.supabase.co';
+ const API_KEY='sb_publishable_wt8VJ9ulkSNHQipnSwBwAw_dSChivV3';
+ const API_HEADERS={apikey:API_KEY};
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const clone=x=>JSON.parse(JSON.stringify(x));
  const node=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=String(text);return x;};
@@ -260,18 +263,69 @@
  $('#photoUpload').addEventListener('change',async e=>{const files=[...e.target.files];let count=0;for(const f of files){if(f.size>10*1024*1024||!['image/jpeg','image/png','image/webp','image/avif'].includes(f.type)){photoMessage('Файл «'+f.name+'» не подходит: используйте JPG, PNG, WEBP или AVIF до 10 МБ.',true);continue;}
    if(mode==='demo'){const url=URL.createObjectURL(f);state.photos.push({url,thumb:url});form.dirty.photos=true;count++;renderPhotos();continue;}
    const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'}[f.type],slug=C.safeSlug(state.slug)?state.slug:uniqueSlug(state.name||'caravan',state.year),name=slug+'/'+crypto.randomUUID()+'.'+ext;
-   photoMessage('Загружаем «'+f.name+'»…');try{const r=await request('/storage/v1/object/catalog-photos/'+name,{method:'POST',headers:{'Content-Type':f.type,'x-upsert':'false'},body:f});if(!r.ok)throw Error('Ошибка загрузки: '+r.status+' '+(await r.text()).slice(0,160));const url=C.URL+'/storage/v1/object/public/catalog-photos/'+name;state.photos.push({url,thumb:url});form.dirty.photos=true;count++;renderPhotos();}catch(err){photoMessage(err.message,true);}}
+   photoMessage('Загружаем «'+f.name+'»…');try{const r=await request('/storage/v1/object/catalog-photos/'+name,{method:'POST',headers:{'Content-Type':f.type,'x-upsert':'false'},body:f});if(!r.ok)throw Error('Ошибка загрузки: '+r.status+' '+(await r.text()).slice(0,160));const url=API_URL+'/storage/v1/object/public/catalog-photos/'+name;state.photos.push({url,thumb:url});form.dirty.photos=true;count++;renderPhotos();}catch(err){photoMessage(err.message,true);}}
   e.target.value='';if(count)photoMessage(mode==='demo'?'Добавлено фото: '+count+'. Это только просмотр — в интернет фотографии не загружены.':'Загружено фотографий: '+count+'. Первое фото будет главным.');
  });
  // Auth, protected reads and writes
- function authHeaders(){return {...C.headers,'Authorization':'Bearer '+token,'Content-Type':'application/json'};}
- async function request(path,opts={}){let r=await fetch(C.URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});if(r.status===401&&refreshToken){if(await refresh())r=await fetch(C.URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});}return r;}
- async function refresh(){try{const r=await fetch(C.URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:C.KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});if(!r.ok)return false;const d=await r.json();token=d.access_token;refreshToken=d.refresh_token;sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));return true;}catch(e){return false;}}
+ function authHeaders(){return {...API_HEADERS,'Authorization':'Bearer '+token,'Content-Type':'application/json'};}
+ async function request(path,opts={}){let r=await fetch(API_URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});if(r.status===401&&refreshToken){if(await refresh())r=await fetch(API_URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});}return r;}
+ async function refresh(){try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});if(!r.ok)return false;const d=await r.json();token=d.access_token;refreshToken=d.refresh_token;sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));return true;}catch(e){return false;}}
  async function getAdmin(){const r=await request('/rest/v1/catalog_admins?select=user_id&limit=1');return r.ok&&(await r.json()).length>0;}
  async function getItems(){const r=await request('/rest/v1/catalog_items?select=*&order=display_order.asc,created_at.desc');if(!r.ok)throw Error('Не удалось прочитать каталог: '+r.status);return await r.json();}
  async function establish(t,rt){token=t;refreshToken=rt;const r=await request('/auth/v1/user');if(!r.ok)throw Error('Сессия истекла');user=await r.json();if(!await getAdmin())throw Error('Учётная запись создана, но права администратора ещё не назначены.');mode='admin';items=await getItems();$('#who').textContent=user.email||'Администратор';$('#logout').classList.remove('hidden');sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));showApp();}
- $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();authMessage('Проверяем доступ…');try{const r=await fetch(C.URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:C.KEY,'Content-Type':'application/json'},body:JSON.stringify({email:$('#email').value.trim(),password:$('#password').value})});if(!r.ok){const x=await r.json();throw Error(x.msg||x.error_description||'Неверная почта или пароль');}const d=await r.json();await establish(d.access_token,d.refresh_token);}catch(err){authMessage(err.message,true);token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');}});
- $('#registerBtn').addEventListener('click',async()=>{const email=$('#email').value.trim(),password=$('#password').value;if(!email||password.length<8){authMessage('Укажите почту и пароль не короче 8 символов.',true);return;}authMessage('Регистрируем аккаунт…');try{const r=await fetch(C.URL+'/auth/v1/signup',{method:'POST',headers:{apikey:C.KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok)throw Error(d.msg||d.error_description||d.message||'Ошибка регистрации');authMessage('Проверьте почту и подтвердите адрес. Затем потребуется назначить права администратора.');}catch(e){authMessage(e.message,true);}});
+ $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();authMessage('Проверяем доступ…');try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:$('#email').value.trim(),password:$('#password').value})});if(!r.ok){const x=await r.json();throw Error(x.msg||x.error_description||'Неверная почта или пароль');}const d=await r.json();await establish(d.access_token,d.refresh_token);}catch(err){authMessage(err.message,true);token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');}});
+ // Password recovery via Supabase Auth. No password or token is logged or stored persistently.
+ let recoveryMode=false;
+ $('#forgotBtn').addEventListener('click',async()=>{
+  const email=$('#email').value.trim();
+  if(!email||!$('#email').checkValidity()){authMessage('Сначала укажите электронную почту от админки.',true);$('#email').focus();return;}
+  const btn=$('#forgotBtn');btn.disabled=true;authMessage('Отправляем письмо для восстановления пароля…');
+  try{
+   const url=API_URL+'/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+'/admin.html');
+   const r=await fetch(url,{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email})});
+   if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.msg||d.error_description||d.message||'Не удалось отправить письмо ('+r.status+').');}
+   authMessage('Если эта почта зарегистрирована, письмо со ссылкой для смены пароля придёт на неё. Проверьте также папку «Спам».');
+  }catch(e){authMessage('Ошибка отправки: '+e.message,true);}finally{btn.disabled=false;}
+ });
+ function showRecoveryForm(access,refresh){
+  recoveryMode=true;token=access;refreshToken=refresh||null;
+  sessionStorage.removeItem('tb_admin_session');
+  $('#loginForm').classList.add('hidden');$('#forgotBtn').classList.add('hidden');
+  $('#registerBtn').classList.add('hidden');$('#demoBtn').classList.add('hidden');
+  $('#resetForm').classList.remove('hidden');
+  authMessage('Ссылка подтверждена. Придумайте новый пароль для админки.');
+  history.replaceState(null,'',location.pathname+location.search);
+  $('#newPassword').focus();
+ }
+ const recoveryHash=new URLSearchParams(location.hash.slice(1));
+ const recoveryQuery=new URLSearchParams(location.search);
+ if(recoveryHash.get('type')==='recovery'&&recoveryHash.get('access_token')){
+  showRecoveryForm(recoveryHash.get('access_token'),recoveryHash.get('refresh_token'));
+ }else if(recoveryQuery.get('type')==='recovery'&&recoveryQuery.get('token_hash')){
+  recoveryMode=true;authMessage('Проверяем ссылку для восстановления…');
+  fetch(API_URL+'/auth/v1/verify',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({type:'recovery',token_hash:recoveryQuery.get('token_hash')})})
+   .then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.msg||d.message||'Ссылка недействительна');showRecoveryForm(d.access_token,d.refresh_token);})
+   .catch(e=>{recoveryMode=false;authMessage('Не удалось подтвердить ссылку: '+e.message,true);});
+ }else if(recoveryHash.get('error')||recoveryQuery.get('error')){
+  authMessage('Ссылка восстановления недействительна или устарела. Запросите новую.',true);
+  history.replaceState(null,'',location.pathname+location.search);
+ }
+ $('#resetForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!recoveryMode||!token){authMessage('Ссылка восстановления устарела. Запросите новую.',true);return;}
+  const password=$('#newPassword').value;
+  if(password.length<8){authMessage('Пароль должен содержать не менее 8 символов.',true);return;}
+  const btn=$('#resetForm button[type="submit"]');btn.disabled=true;authMessage('Сохраняем новый пароль…');
+  try{
+   const r=await fetch(API_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:API_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password})});
+   if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.msg||d.error_description||d.message||'Ошибка изменения пароля ('+r.status+').');}
+   recoveryMode=false;token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');
+   $('#resetForm').classList.add('hidden');$('#loginForm').classList.remove('hidden');
+   $('#forgotBtn').classList.remove('hidden');$('#registerBtn').classList.remove('hidden');$('#demoBtn').classList.remove('hidden');
+   $('#password').value='';$('#newPassword').value='';
+   authMessage('Пароль успешно изменён! Теперь войдите с новым паролем.');
+  }catch(e){authMessage('Не удалось изменить пароль: '+e.message,true);}finally{btn.disabled=false;}
+ });
+ $('#registerBtn').addEventListener('click',async()=>{const email=$('#email').value.trim(),password=$('#password').value;if(!email||password.length<8){authMessage('Укажите почту и пароль не короче 8 символов.',true);return;}authMessage('Регистрируем аккаунт…');try{const r=await fetch(API_URL+'/auth/v1/signup',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok)throw Error(d.msg||d.error_description||d.message||'Ошибка регистрации');authMessage('Проверьте почту и подтвердите адрес. Затем потребуется назначить права администратора.');}catch(e){authMessage(e.message,true);}});
  $('#demoBtn').addEventListener('click',()=>{mode='demo';items=clone(C.seed);showApp();});
  $('#logout').addEventListener('click',async()=>{if(token){try{await request('/auth/v1/logout',{method:'POST'});}catch(e){}}token=null;refreshToken=null;user=null;sessionStorage.removeItem('tb_admin_session');location.reload();});
  $('#importBtn').addEventListener('click',async()=>{if(mode!=='admin')return;if(!confirm('Перенести три утверждённые карточки в базу? Уже существующие записи не будут перезаписаны.'))return;message('Переносим карточки…');try{for(const i of C.seed){const r=await request('/rest/v1/catalog_items?on_conflict=slug',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify(i)});if(!r.ok)throw Error(i.name+': '+r.status+' '+(await r.text()).slice(0,160));}items=await getItems();$('#adminTools').classList.toggle('hidden',C.seed.every(s=>items.some(i=>i.slug===s.slug)));select(items[0]?.slug||'');message('Импорт завершён. Все три карточки в базе. Проверяйте их в тестовом каталоге.');}catch(e){message('Ошибка импорта: '+e.message,true);}});
@@ -285,5 +339,5 @@
    if(!r.ok)throw Error('Ошибка сохранения '+r.status+': '+(await r.text()).slice(0,300));const rows=await r.json();items=await getItems();select(rows[0]?.slug||payload.slug);message('Сохранено. '+(payload.is_published?'Карточка опубликована в базе.':'Это черновик — на сайте не показывается.'));
   }catch(err){message(err.message,true);}finally{$('#saveBtn').disabled=false;}
  });
- try{const saved=JSON.parse(sessionStorage.getItem('tb_admin_session')||'null');if(saved?.token&&saved?.refreshToken)establish(saved.token,saved.refreshToken).catch(()=>{sessionStorage.removeItem('tb_admin_session');});}catch(e){}
+ try{const saved=JSON.parse(sessionStorage.getItem('tb_admin_session')||'null');if(!recoveryMode&&saved?.token&&saved?.refreshToken)establish(saved.token,saved.refreshToken).catch(()=>{sessionStorage.removeItem('tb_admin_session');});}catch(e){}
 })();
