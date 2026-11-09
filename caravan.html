@@ -682,7 +682,7 @@ window.tebicampInitGallery = function(){
 <script id="tebicamp-single-file-router-child">
 (function(){document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.similar-card[data-tebicamp-product]');if(!a)return;if(window.parent!==window){e.preventDefault();var product=a.getAttribute('data-tebicamp-product');try{window.parent.postMessage({type:'tebicamp-product-nav',product:product},'*');}catch(err){}}},true);})();
 </script>
-<script src="catalog-data.js"></script><script src="catalog-api.js"></script><script src="caravan-detail.js"></script>
+<script src="catalog-data.js?v=20261109-kabe2"></script><script src="catalog-api.js"></script><script src="caravan-detail.js"></script>
 <!-- TeBiCamp: обратный звонок на странице каравана -->
 <style>
   .tbc-detail-callback-btn {
