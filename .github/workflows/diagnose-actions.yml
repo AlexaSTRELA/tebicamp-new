@@ -1,0 +1,18 @@
+name: TeBiCamp Actions diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-actions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test runner availability
+        run: echo "GitHub-hosted runner started successfully"
