@@ -268,11 +268,32 @@
  });
  // Auth, protected reads and writes
  function authHeaders(){return {...API_HEADERS,'Authorization':'Bearer '+token,'Content-Type':'application/json'};}
- async function request(path,opts={}){let r=await fetch(API_URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});if(r.status===401&&refreshToken){if(await refresh())r=await fetch(API_URL+path,{...opts,headers:{...authHeaders(),...opts.headers}});}return r;}
+ async function request(path,opts={}){
+  const send=async()=>{
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+   try{return await fetch(API_URL+path,{...opts,signal:controller.signal,headers:{...authHeaders(),...opts.headers}});}
+   catch(e){if(e.name==='AbortError')throw Error('Сервер не ответил за 15 секунд ('+path.split('?')[0]+').');throw e;}
+   finally{clearTimeout(timer);}
+  };
+  let r=await send();
+  if(r.status===401&&refreshToken){if(await refresh())r=await send();}
+  return r;
+ }
  async function refresh(){try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});if(!r.ok)return false;const d=await r.json();token=d.access_token;refreshToken=d.refresh_token;sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));return true;}catch(e){return false;}}
  async function getAdmin(){const r=await request('/rest/v1/catalog_admins?select=user_id&limit=1');return r.ok&&(await r.json()).length>0;}
  async function getItems(){const r=await request('/rest/v1/catalog_items?select=*&order=display_order.asc,created_at.desc');if(!r.ok)throw Error('Не удалось прочитать каталог: '+r.status);return await r.json();}
- async function establish(t,rt){token=t;refreshToken=rt;const r=await request('/auth/v1/user');if(!r.ok)throw Error('Сессия истекла');user=await r.json();if(!await getAdmin())throw Error('Учётная запись создана, но права администратора ещё не назначены.');mode='admin';items=await getItems();$('#who').textContent=user.email||'Администратор';$('#logout').classList.remove('hidden');sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));showApp();}
+ async function establish(t,rt){
+  token=t;refreshToken=rt;
+  authMessage('Пароль принят. Проверяем права администратора…');
+  if(!await getAdmin())throw Error('Не удалось подтвердить права администратора.');
+  authMessage('Права подтверждены. Загружаем каталог караванов…');
+  const loaded=await getItems();
+  items=loaded;mode='admin';user={email:$('#email').value.trim()||'Администратор'};
+  $('#who').textContent=user.email;
+  $('#logout').classList.remove('hidden');
+  sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));
+  showApp();
+ }
  $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();authMessage('Проверяем доступ…');try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:$('#email').value.trim(),password:$('#password').value})});if(!r.ok){const x=await r.json();throw Error(x.msg||x.error_description||'Неверная почта или пароль');}const d=await r.json();await establish(d.access_token,d.refresh_token);}catch(err){authMessage(err.message,true);token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');}});
  // Password recovery via Supabase Auth. No password or token is logged or stored persistently.
  let recoveryMode=false;
