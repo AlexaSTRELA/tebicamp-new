@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проданные караваны — TeBiCamp</title>
+<meta name="description" content="Архив проданных караванов TeBiCamp: фотографии, модели и полные карточки ранее проданных прицепов-дач.">
+<style>
+:root{color-scheme:dark;--accent:#16d3dc;--bg:#06191f;--text:#f1fbfc;--muted:#bdd0d4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 82% 5%,rgba(17,198,207,.13),transparent 30%),linear-gradient(180deg,#071d23,var(--bg));font:16px/1.55 Arial,Helvetica,sans-serif;color:var(--text);min-height:100vh}a{color:inherit}
+.header{border-bottom:1px solid rgba(255,255,255,.1);background:rgba(5,22,28,.75);backdrop-filter:blur(12px)}
+.header-inner{max-width:1280px;margin:auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:800;letter-spacing:.07em;text-decoration:none;color:#9bf4f4;font-size:20px}.back{color:#c6e5e6;text-decoration:none;font-size:14px}.back:hover,.sold-details-link:hover{color:#fff}
+.sold-section{padding:76px 0 100px}.sold-wrap{width:min(1280px,calc(100% - 44px));margin:auto}.sold-kicker{color:var(--accent);text-transform:uppercase;font-weight:800;font-size:12px;letter-spacing:.14em;margin-bottom:14px}
+h1{font-size:clamp(40px,6vw,72px);line-height:1.05;letter-spacing:-.045em;margin:0 0 18px}.intro{max-width:730px;color:var(--muted);margin:0 0 24px}.sold-count{display:inline-flex;padding:9px 15px;border:1px solid rgba(22,211,220,.32);background:rgba(7,36,43,.62);border-radius:99px;color:#dff9fb;font-size:13px;font-weight:700;margin-bottom:30px}
+.sold-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.sold-card{min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:19px;background:linear-gradient(180deg,rgba(14,50,58,.96),rgba(6,31,37,.98));box-shadow:0 18px 44px rgba(0,0,0,.22)}
+.sold-media{height:265px;position:relative;overflow:hidden;background:#061a20}.sold-main{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}.sold-card:hover .sold-main{transform:scale(1.02)}
+.sold-badge{position:absolute;top:14px;left:14px;padding:8px 12px;border-radius:99px;background:rgba(5,28,34,.87);border:1px solid rgba(47,228,236,.36);color:#72f2f6;font-size:11px;font-weight:900;text-transform:uppercase}
+.sold-thumb{position:absolute;right:14px;bottom:14px;width:112px;height:80px;padding:0;border:2px solid rgba(255,255,255,.82);border-radius:13px;overflow:hidden;background:#071d22;cursor:pointer;box-shadow:0 9px 26px rgba(0,0,0,.38)}.sold-thumb img{width:100%;height:100%;object-fit:cover}
+.sold-info{padding:18px;display:flex;justify-content:space-between;align-items:center;gap:14px}.sold-info h3{font-size:17px;line-height:1.2;margin:0 0 7px}.sold-year{color:#9fc1c6;font-size:13px}.sold-details-link{color:#74eef0;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap}.sold-empty{color:var(--muted)}
+.footer{border-top:1px solid rgba(255,255,255,.09);padding:28px 24px;text-align:center;color:#8faeb3;font-size:13px}
+@media(max-width:980px){.sold-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.header-inner{padding:16px}.sold-section{padding:54px 0 70px}.sold-wrap{width:calc(100% - 28px)}.sold-grid{grid-template-columns:1fr}.sold-media{height:245px}.sold-info{padding:17px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner"><a class="brand" href="index.html">TEBICAMP</a><a class="back" href="index.html#sold">← На главную</a></div></header>
+<main><section class="sold-section" aria-labelledby="sold-title"><div class="sold-wrap">
+<div class="sold-kicker">История продаж</div><h1 id="sold-title">Проданные караваны</h1>
+<p class="intro">Караваны, которые уже нашли своих хозяев. Сохраняем историю моделей, фотографии и подробные описания тех караванов, для которых есть полные карточки.</p>
+<div class="sold-count" data-sold-count>Загружаем архив…</div>
+<div class="sold-grid" id="soldDynamic" data-sold-view="all" aria-live="polite"></div>
+</div></section></main>
+<footer class="footer">© 2026 TeBiCamp · Караваны и путешествия</footer>
+<script src="catalog-data.js?v=20261109-archive"></script>
+<script src="catalog-api.js?v=20261109-archive"></script>
+<script src="sold-history.js?v=20261109-archive"></script>
+<script src="sold-catalog.js?v=20261109-archive"></script>
+</body></html>
