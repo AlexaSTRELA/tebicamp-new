@@ -13,10 +13,6 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: tebicamp-catalog-publish
-  cancel-in-progress: false
-
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
