@@ -147,7 +147,16 @@
   const preview=$('#preview');preview.classList.toggle('hidden',!state.slug || (mode==='admin'&&!state.is_published));preview.href='caravan.html?slug='+encodeURIComponent(state.slug||'')+(mode==='demo'?'&demo=1':'');
  }
  function select(slug){selectedSlug=slug;state=clone(items.find(i=>i.slug===slug)||blank());original=clone(state);form=readForm(state);renderForm();renderList();message(mode==='admin'?'Изменения сохраняются только после нажатия «Сохранить караван».':'Демо-режим: можно менять поля и добавлять фотографии, но сохранение недоступно.');}
- function showApp(){ $('#auth').classList.add('hidden');$('#app').classList.remove('hidden');$('#saveBtn').disabled=mode!=='admin';$('#adminTools').classList.toggle('hidden',mode!=='admin'||C.seed.every(s=>items.some(i=>i.slug===s.slug)));notice(mode==='admin'?'Доступ подтверждён. Теперь можно сохранять изменения.':'Демо: всё можно попробовать, включая загрузку фотографий. Данные в интернет не отправляются.');renderList();select(items[0]?.slug||'');}
+ function showApp(){
+  $('#saveBtn').disabled=mode!=='admin';
+  $('#adminTools').classList.toggle('hidden',mode!=='admin'||C.seed.every(s=>items.some(i=>i.slug===s.slug)));
+  notice(mode==='admin'?'Доступ подтверждён. Теперь можно сохранять изменения.':'Демо: всё можно попробовать, включая загрузку фотографий. Данные в интернет не отправляются.');
+  renderList();
+  select(items[0]?.slug||'');
+  $('#app').classList.remove('hidden');
+  $('#auth').classList.add('hidden');
+  window.scrollTo(0,0);
+ }
  function translit(s){const ru='абвгдеёжзийклмнопрстуфхцчшщъыьэюя',en=['a','b','v','g','d','e','yo','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','ts','ch','sh','shch','','y','','e','yu','ya'];const map=Object.fromEntries([...ru].map((ch,i)=>[ch,en[i]]));return [...clean(s).toLowerCase()].map(ch=>map[ch]??ch).join('').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,75);}
  function uniqueSlug(name,year){let base=translit(name+' '+year)||'caravan',s=base,n=2;while(items.some(i=>i.slug===s)){s=base+'-'+n;n++;}return s;}
  function toEquipment(){const result=[];for(const p of presets){if(!form.equipment.has(p.id))continue;let title=p.title,text=p.description;const old=form.oldEquipment[p.id];const key=({solar:'solar',battery:'battery',water:'water',gasboiler:'boiler',elecboiler:'boiler',floor:'floor',fridge:'fridge'})[p.id];const unchanged=key?form.details[key]===form.originalDetails[key]:true;
@@ -281,7 +290,30 @@
  }
  async function refresh(){try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});if(!r.ok)return false;const d=await r.json();token=d.access_token;refreshToken=d.refresh_token;sessionStorage.setItem('tb_admin_session',JSON.stringify({token,refreshToken}));return true;}catch(e){return false;}}
  async function getAdmin(){const r=await request('/rest/v1/catalog_admins?select=user_id&limit=1');return r.ok&&(await r.json()).length>0;}
- async function getItems(){const r=await request('/rest/v1/catalog_items?select=*&order=display_order.asc,created_at.desc');if(!r.ok)throw Error('Не удалось прочитать каталог: '+r.status);return await r.json();}
+ async function getItems(){
+  const path='/rest/v1/catalog_items?select=*&order=display_order.asc,created_at.desc';
+  let lastError;
+  for(let attempt=1;attempt<=2;attempt++){
+   try{
+    authMessage('Права подтверждены. Получаем каталог (попытка '+attempt+' из 2)…');
+    const r=await request(path,{cache:'no-store'});
+    if(!r.ok)throw Error('Сервер каталога ответил '+r.status);
+    authMessage('Ответ каталога получен. Читаем данные…');
+    let timer;
+    try{
+     const body=await Promise.race([r.text(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Загрузка данных каталога заняла больше 12 секунд')),12000);})]);
+     const data=JSON.parse(body);
+     if(!Array.isArray(data))throw Error('Сервер вернул каталог в неожиданном формате');
+     authMessage('Получено караванов: '+data.length+'. Открываем админку…');
+     return data;
+    }finally{clearTimeout(timer);}
+   }catch(e){
+    lastError=e;
+    if(attempt<2)authMessage('Первая попытка загрузки не удалась: '+e.message+'. Повторяем…',true);
+   }
+  }
+  throw Error('Каталог не загрузился: '+lastError.message);
+ }
  async function establish(t,rt){
   token=t;refreshToken=rt;
   authMessage('Пароль принят. Проверяем права администратора…');
