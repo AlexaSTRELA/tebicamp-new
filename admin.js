@@ -339,14 +339,22 @@
   if(password.length<8){authMessage('Пароль должен содержать не менее 8 символов.',true);return;}
   const btn=$('#resetForm button[type="submit"]');btn.disabled=true;authMessage('Сохраняем новый пароль…');
   try{
-   const r=await fetch(API_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:API_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password})});
+   const controller=new AbortController();
+   const timeout=setTimeout(()=>controller.abort(),12000);
+   let r;
+   try{
+    r=await fetch(API_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:API_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password}),signal:controller.signal});
+   }finally{clearTimeout(timeout);}
    if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.msg||d.error_description||d.message||'Ошибка изменения пароля ('+r.status+').');}
    recoveryMode=false;token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');
    $('#resetForm').classList.add('hidden');$('#recoveryLinkForm').classList.add('hidden');$('#loginForm').classList.remove('hidden');
    $('#forgotBtn').classList.remove('hidden');$('#registerBtn').classList.remove('hidden');$('#demoBtn').classList.remove('hidden');
    $('#password').value='';$('#newPassword').value='';
    authMessage('Пароль успешно изменён! Теперь войдите с новым паролем.');
-  }catch(e){authMessage('Не удалось изменить пароль: '+e.message,true);}finally{btn.disabled=false;}
+  }catch(e){
+   const detail=e.name==='AbortError'?'Сервер не ответил за 12 секунд. Возможно, соединение блокируется браузером или сетью. Попробуйте войти с новым паролем; если вход не получится, запросите новую ссылку.':e.message;
+   authMessage('Не удалось подтвердить сохранение пароля: '+detail,true);
+  }finally{btn.disabled=false;}
  });
  $('#registerBtn').addEventListener('click',async()=>{const email=$('#email').value.trim(),password=$('#password').value;if(!email||password.length<8){authMessage('Укажите почту и пароль не короче 8 символов.',true);return;}authMessage('Регистрируем аккаунт…');try{const r=await fetch(API_URL+'/auth/v1/signup',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok)throw Error(d.msg||d.error_description||d.message||'Ошибка регистрации');authMessage('Проверьте почту и подтвердите адрес. Затем потребуется назначить права администратора.');}catch(e){authMessage(e.message,true);}});
  $('#demoBtn').addEventListener('click',()=>{mode='demo';items=clone(C.seed);showApp();});
