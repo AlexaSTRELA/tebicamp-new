@@ -276,7 +276,8 @@
  $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();authMessage('Проверяем доступ…');try{const r=await fetch(API_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:$('#email').value.trim(),password:$('#password').value})});if(!r.ok){const x=await r.json();throw Error(x.msg||x.error_description||'Неверная почта или пароль');}const d=await r.json();await establish(d.access_token,d.refresh_token);}catch(err){authMessage(err.message,true);token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');}});
  // Password recovery via Supabase Auth. No password or token is logged or stored persistently.
  let recoveryMode=false;
- $('#forgotBtn').addEventListener('click',async()=>{
+ $('#recoveryLinkForm').classList.remove('hidden');
+  $('#forgotBtn').addEventListener('click',async()=>{
   const email=$('#email').value.trim();
   if(!email||!$('#email').checkValidity()){authMessage('Сначала укажите электронную почту от админки.',true);$('#email').focus();return;}
   const btn=$('#forgotBtn');btn.disabled=true;authMessage('Отправляем письмо для восстановления пароля…');
@@ -284,7 +285,8 @@
    const url=API_URL+'/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+'/admin.html');
    const r=await fetch(url,{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email})});
    if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.msg||d.error_description||d.message||'Не удалось отправить письмо ('+r.status+').');}
-   authMessage('Если эта почта зарегистрирована, письмо со ссылкой для смены пароля придёт на неё. Проверьте также папку «Спам».');
+   $('#recoveryLinkForm').classList.remove('hidden');
+   authMessage('Письмо отправлено, если почта зарегистрирована. Не открывайте ссылку из письма: скопируйте её адрес и вставьте в поле ниже.');
   }catch(e){authMessage('Ошибка отправки: '+e.message,true);}finally{btn.disabled=false;}
  });
  function showRecoveryForm(access,refresh){
@@ -310,6 +312,27 @@
   authMessage('Ссылка восстановления недействительна или устарела. Запросите новую.',true);
   history.replaceState(null,'',location.pathname+location.search);
  }
+ $('#recoveryLinkForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const raw=$('#recoveryLink').value.trim();
+  let url;
+  try{url=new URL(raw);}catch(_){authMessage('Ссылка некорректна. Скопируйте полный адрес из письма.',true);return;}
+  if(url.protocol!=='https:'||url.hostname!=='gtbaelazxrapzdkygbsh.supabase.co'||url.pathname!=='/auth/v1/verify'||url.searchParams.get('type')!=='recovery'){
+   authMessage('Это не ссылка восстановления от нашего проекта Supabase.',true);return;
+  }
+  const tokenHash=url.searchParams.get('token');
+  if(!tokenHash||!/^[a-f0-9]{32,128}$/i.test(tokenHash)){authMessage('В ссылке отсутствует действительный код восстановления.',true);return;}
+  const btn=$('#recoveryLinkForm button[type="submit"]');btn.disabled=true;
+  authMessage('Проверяем код восстановления…');
+  try{
+   const r=await fetch(API_URL+'/auth/v1/verify',{method:'POST',headers:{apikey:API_KEY,'Content-Type':'application/json'},body:JSON.stringify({token_hash:tokenHash,type:'recovery'})});
+   const d=await r.json().catch(()=>({}));
+   if(!r.ok||!d.access_token)throw Error(d.msg||d.error_description||d.message||'Ссылка истекла или уже использована. Запросите новое письмо.');
+   $('#recoveryLink').value='';
+   $('#recoveryLinkForm').classList.add('hidden');
+   showRecoveryForm(d.access_token,d.refresh_token);
+  }catch(err){authMessage('Не удалось подтвердить ссылку: '+err.message,true);}finally{btn.disabled=false;}
+ });
  $('#resetForm').addEventListener('submit',async e=>{
   e.preventDefault();if(!recoveryMode||!token){authMessage('Ссылка восстановления устарела. Запросите новую.',true);return;}
   const password=$('#newPassword').value;
@@ -319,7 +342,7 @@
    const r=await fetch(API_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:API_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password})});
    if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.msg||d.error_description||d.message||'Ошибка изменения пароля ('+r.status+').');}
    recoveryMode=false;token=null;refreshToken=null;sessionStorage.removeItem('tb_admin_session');
-   $('#resetForm').classList.add('hidden');$('#loginForm').classList.remove('hidden');
+   $('#resetForm').classList.add('hidden');$('#recoveryLinkForm').classList.add('hidden');$('#loginForm').classList.remove('hidden');
    $('#forgotBtn').classList.remove('hidden');$('#registerBtn').classList.remove('hidden');$('#demoBtn').classList.remove('hidden');
    $('#password').value='';$('#newPassword').value='';
    authMessage('Пароль успешно изменён! Теперь войдите с новым паролем.');
