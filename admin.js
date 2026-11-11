@@ -288,17 +288,38 @@
   $('#retryLoginBtn').classList.add('hidden');
  }
  function authHeaders(){return {...API_HEADERS,'Authorization':'Bearer '+token,'Content-Type':'application/json'};}
- // Keep the deadline active until the body is received, not just the headers.
+ // Some connections deliver the entire JSON but stall before the stream ends.
+ // Only a complete, parseable object/array may bypass that transport terminator.
+ async function readResponseBody(r){
+  if(!r.body||!r.headers.get('content-type')?.toLowerCase().includes('application/json'))return r.text();
+  const reader=r.body.getReader(),decoder=new TextDecoder();
+  let body='';
+  try{
+   while(true){
+    const {value,done}=await reader.read();
+    body+=decoder.decode(value,{stream:!done});
+    if(done)return body;
+    const trimmed=body.trim();
+    if((trimmed.startsWith('{')&&trimmed.endsWith('}'))||(trimmed.startsWith('[')&&trimmed.endsWith(']'))){
+     try{JSON.parse(body);}catch(e){continue;}
+     reader.cancel().catch(()=>{});
+     return body;
+    }
+   }
+  }finally{reader.releaseLock();}
+ }
+ // The deadline also covers receiving a complete JSON value.
  async function fetchResponse(url,opts={}){
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
   try{
    const r=await fetch(url,{...opts,signal:controller.signal});
-   const body=await r.text();
+   const body=await readResponseBody(r);
    return new Response(body||null,{status:r.status,statusText:r.statusText,headers:r.headers});
   }catch(e){
    throw authError(e.name==='AbortError'?'Соединение с сервером прервалось по времени ожидания.':'Не удалось получить ответ сервера. Проверьте соединение и повторите попытку.',true);
-  }finally{clearTimeout(timer);}
+  }finally{clearTimeout(timer);controller.abort();}
  }
+
  function responseError(r){
   return authError('Сервер ответил '+r.status+'.',r.status===408||r.status===429||r.status>=500);
  }
