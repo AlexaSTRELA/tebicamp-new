@@ -1,0 +1,17 @@
+name: Check admin sign-in recovery
+on:
+  push:
+    paths: ['admin.js', 'admin.html', 'tests/admin-auth.cjs', '.github/workflows/test-admin.yml']
+  pull_request:
+    paths: ['admin.js', 'admin.html', 'tests/admin-auth.cjs', '.github/workflows/test-admin.yml']
+permissions:
+  contents: read
+jobs:
+  auth-recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests/admin-auth.cjs
