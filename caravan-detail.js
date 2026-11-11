@@ -43,7 +43,16 @@
    const price=hero.querySelector('.price');if(price)price.textContent=item.price_rub?C.money(item.price_rub):'Цена по запросу';
    const d=$('#description');d.querySelector('.lead').textContent=item.description_lead||item.lead||'';
    const long=clear(d.querySelector('.longtext'));
-   (item.paragraphs||[]).filter(p=>p.title||p.text).forEach(p=>{const e=node('p');if(p.title)e.appendChild(node('strong','',p.title+' '));e.appendChild(document.createTextNode(p.text||''));long.appendChild(e);});
+   // Blank lines delimit compact paragraphs; single line breaks still serve lists.
+   (item.paragraphs||[]).filter(p=>p.title||p.text).forEach(p=>{
+     const blocks=String(p.text||'').split(/\r?\n[\t ]*\r?\n(?:[\t ]*\r?\n)*/);
+     blocks.forEach((text,i)=>{
+       if(!text.trim()&&!(i===0&&p.title))return;
+       const e=node('p');
+       if(i===0&&p.title)e.appendChild(node('strong','',p.title+' '));
+       e.appendChild(document.createTextNode(text));long.appendChild(e);
+     });
+   });
    const sp=$('#specs');sp.querySelector('.lead').textContent='Основные размеры и параметры '+item.name+'.';
    const specsGrid=clear(sp.querySelector('.grid-2'));
    (item.spec_groups||[]).filter(g=>(g.rows||[]).some(r=>r.label&&r.value)).forEach(g=>specsGrid.appendChild(makeSpecCard(g,'info-card dimensions-card')));
