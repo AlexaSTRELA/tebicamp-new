@@ -6,7 +6,18 @@
 .card-media.tb-portrait-frame{aspect-ratio:1/1!important;min-height:0!important;background:#0b252b!important}
 .tb-portrait-frame img.tb-portrait-photo{object-fit:contain!important;object-position:center!important;transform:none!important}
 #galleryViewport.tb-portrait-frame .gallery-slide img{object-fit:contain!important;object-position:center!important;transform:none!important}
-/* Give fullscreen images explicit bounds and room around all four edges. */
-.gallery-lightbox-image{box-sizing:border-box!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;padding:40px 70px!important;object-fit:contain!important}
-.gallery-lightbox-image.tb-portrait-photo{width:min(calc(100vw - 32px),calc(100dvh - 96px))!important;height:min(calc(100vw - 32px),calc(100dvh - 96px))!important;padding:0!important;background:#0b252b!important}
-@media(max-width:767px){.gallery-lightbox-image{padding:52px 16px!important}}
+/* Fullscreen gallery: use the entire viewport without cropping or distorting originals. */
+.gallery-lightbox-image,
+.gallery-lightbox-image.tb-portrait-photo{
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  padding:0!important;
+  margin:0!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:transparent!important;
+}
