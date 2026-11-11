@@ -64,7 +64,7 @@ def mirror_photo(url, slug, cache):
         return url  # Existing local assets remain untouched.
     path = unquote(parsed.path[len(STORAGE_PREFIX):])
     parts = path.split("/")
-    if len(parts) != 2 or parts[0] != slug or not FILE.fullmatch(parts[1]):
+    if len(parts) != 2 or not ALLOWED.fullmatch(parts[0]) or not FILE.fullmatch(parts[1]):
         raise RuntimeError("Unexpected public photo path for " + slug)
     relative = "assets/catalog/" + slug + "/" + parts[1]
     if url in cache:
